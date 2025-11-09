@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - 四川农业大学图书馆</title>
+    <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <!-- 学校图标 -->
+            <div class="nav-logo">
+                <a href="https://webvpn.sicau.edu.cn/https/77726476706e69737468656265737421e7e056d234396b516b468ca88d1b203b/" target="_blank" class="logo-link">
+                    <img src="image/icon/SchoolLogoStart.png" alt="四川农业大学校徽" class="school-logo">
+                </a>
+            </div>
+            
+            <!-- 搜索栏 -->
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="搜索图书、作者、ISBN..." class="search-input">
+                <button id="searchBtn" class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 用户信息 -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <div class="avatar-placeholder" id="avatarInitial">张</div>
+                </div>
+                <span class="username" id="usernameDisplay">张三</span>
+                <div class="user-dropdown">
+                    <button class="dropdown-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">个人资料</a>
+                        <a href="#" class="dropdown-item">借阅记录</a>
+                        <a href="#" class="dropdown-item">设置</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="index.html" class="dropdown-item">退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 欢迎横幅 -->
+        <section class="welcome-banner">
+            <div class="banner-content">
+                <h1 id="welcomeTitle">欢迎回来，张三！</h1>
+                <p>今天是你使用图书馆的第1天</p>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">当前借阅</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">累计阅读</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">收藏书籍</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能选项卡 -->
+        <section class="tab-section">
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="borrowed">借书</button>
+                <button class="tab-btn" data-tab="read">看过</button>
+                <button class="tab-btn" data-tab="recommend">推荐</button>
+                <button class="tab-btn" data-tab="favorite">收藏</button>
+            </div>
+
+            <!-- 借书内容 - 确保完整显示 -->
+            <div class="tab-content active" id="borrowed">
+                <h2>当前借阅的书籍</h2>
+                <div class="books-grid">
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">深入理解计算机系统</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>深入理解计算机系统</h3>
+                            <p class="book-author">Randal E. Bryant</p>
+                            <p class="book-due">归还日期: 2024-12-25</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">算法导论</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>算法导论</h3>
+                            <p class="book-author">Thomas H. Cormen</p>
+                            <p class="book-due">归还日期: 2024-12-20</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">设计模式</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>设计模式</h3>
+                            <p class="book-author">Erich Gamma</p>
+                            <p class="book-due">归还日期: 2024-12-18</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">计算机网络</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>计算机网络</h3>
+                            <p class="book-author">Andrew S. Tanenbaum</p>
+                            <p class="book-due">归还日期: 2024-12-22</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">操作系统概念</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>操作系统概念</h3>
+                            <p class="book-author">Abraham Silberschatz</p>
+                            <p class="book-due">归还日期: 2024-12-19</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">编译原理</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>编译原理</h3>
+                            <p class="book-author">Alfred V. Aho</p>
+                            <p class="book-due">归还日期: 2024-12-24</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">软件工程</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>软件工程</h3>
+                            <p class="book-author">Ian Sommerville</p>
+                            <p class="book-due">归还日期: 2024-12-26</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">数据库系统概念</div>
+                        </div>
+                        <div class="book-info">
+                            <h3>数据库系统概念</h3>
+                            <p class="book-author">Abraham Silberschatz</p>
+                            <p class="book-due">归还日期: 2024-12-21</p>
+                            <button class="action-btn renew-btn">续借</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 看过内容 - 确保完整显示 -->
+            <div class="tab-content" id="read">
+                <h2>阅读历史</h2>
+                <div class="books-list">
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">Java编程思想</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>Java编程思想</h3>
+                            <p class="book-author">Bruce Eckel</p>
+                            <p class="read-date">阅读时间: 2024-11-15</p>
+                            <div class="rating">
+                                <span class="stars">★★★★☆</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">Python核心编程</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>Python核心编程</h3>
+                            <p class="book-author">Wesley J. Chun</p>
+                            <p class="read-date">阅读时间: 2024-11-10</p>
+                            <div class="rating">
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">C++ Primer</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>C++ Primer</h3>
+                            <p class="book-author">Stanley B. Lippman</p>
+                            <p class="read-date">阅读时间: 2024-11-05</p>
+                            <div class="rating">
+                                <span class="stars">★★★★☆</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">数据结构与算法分析</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>数据结构与算法分析</h3>
+                            <p class="book-author">Mark Allen Weiss</p>
+                            <p class="read-date">阅读时间: 2024-10-28</p>
+                            <div class="rating">
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">软件工程</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>软件工程</h3>
+                            <p class="book-author">Ian Sommerville</p>
+                            <p class="read-date">阅读时间: 2024-10-20</p>
+                            <div class="rating">
+                                <span class="stars">★★★★☆</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">人月神话</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>人月神话</h3>
+                            <p class="book-author">Frederick P. Brooks</p>
+                            <p class="read-date">阅读时间: 2024-10-15</p>
+                            <div class="rating">
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">代码大全</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>代码大全</h3>
+                            <p class="book-author">Steve McConnell</p>
+                            <p class="read-date">阅读时间: 2024-10-08</p>
+                            <div class="rating">
+                                <span class="stars">★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="book-cover-small">
+                            <div class="book-placeholder-small">重构</div>
+                        </div>
+                        <div class="history-info">
+                            <h3>重构：改善既有代码的设计</h3>
+                            <p class="book-author">Martin Fowler</p>
+                            <p class="read-date">阅读时间: 2024-10-01</p>
+                            <div class="rating">
+                                <span class="stars">★★★★☆</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 推荐内容 - 确保完整显示 -->
+            <div class="tab-content" id="recommend">
+                <h2>为你推荐</h2>
+                <div class="recommendation-grid">
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">人工智能：现代方法</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>人工智能：现代方法</h3>
+                            <p class="book-author">Stuart Russell</p>
+                            <p class="recommend-reason">基于你的借阅历史推荐</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">机器学习</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>机器学习</h3>
+                            <p class="book-author">周志华</p>
+                            <p class="recommend-reason">热门技术书籍</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">深度学习</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>深度学习</h3>
+                            <p class="book-author">Ian Goodfellow</p>
+                            <p class="recommend-reason">人工智能领域经典</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">计算机视觉</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>计算机视觉</h3>
+                            <p class="book-author">Richard Szeliski</p>
+                            <p class="recommend-reason">图像处理必读</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">自然语言处理</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>自然语言处理</h3>
+                            <p class="book-author">Daniel Jurafsky</p>
+                            <p class="recommend-reason">NLP入门经典</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                    <div class="recommend-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">数据挖掘</div>
+                        </div>
+                        <div class="recommend-info">
+                            <h3>数据挖掘：概念与技术</h3>
+                            <p class="book-author">Jiawei Han</p>
+                            <p class="recommend-reason">大数据分析必备</p>
+                            <button class="action-btn borrow-btn">立即借阅</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 收藏内容 - 确保完整显示 -->
+            <div class="tab-content" id="favorite">
+                <h2>我的收藏</h2>
+                <div class="favorites-grid">
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">数据库系统概念</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>数据库系统概念</h3>
+                            <p class="book-author">Abraham Silberschatz</p>
+                            <p class="favorite-date">收藏于: 2024-11-01</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">代码大全</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>代码大全</h3>
+                            <p class="book-author">Steve McConnell</p>
+                            <p class="favorite-date">收藏于: 2024-10-25</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">重构</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>重构：改善既有代码的设计</h3>
+                            <p class="book-author">Martin Fowler</p>
+                            <p class="favorite-date">收藏于: 2024-10-18</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">程序员修炼之道</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>程序员修炼之道</h3>
+                            <p class="book-author">Andrew Hunt</p>
+                            <p class="favorite-date">收藏于: 2024-10-10</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">设计模式</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>设计模式</h3>
+                            <p class="book-author">Erich Gamma</p>
+                            <p class="favorite-date">收藏于: 2024-10-05</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <div class="book-cover">
+                            <div class="book-placeholder">算法导论</div>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>算法导论</h3>
+                            <p class="book-author">Thomas H. Cormen</p>
+                            <p class="favorite-date">收藏于: 2024-09-28</p>
+                            <div class="favorite-actions">
+                                <button class="action-btn remove-btn">移除</button>
+                                <button class="action-btn borrow-btn">借阅</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>四川农业大学图书馆</h3>
+                <p>地址：四川省雅安市雨城区新康路46号</p>
+                <p>电话：0835-2882222</p>
+                <p>邮编：625014</p>
+                <p>网址：<a href="http://lib.sicau.edu.cn" target="_blank">lib.sicau.edu.cn</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>开放时间</h3>
+                <p>周一至周五：8:00-22:00</p>
+                <p>周末：9:00-21:00</p>
+                <p>节假日：10:00-18:00</p>
+                <p>寒暑假：9:00-17:00</p>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <p>邮箱：library@sicau.edu.cn</p>
+                <p>微信公众号：四川农业大学图书馆</p>
+                <p>微博：@四川农业大学图书馆</p>
+                <p>咨询电话：0835-2882222</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 四川农业大学图书馆 - 版权所有</p>
+            <p>技术支持：图书馆信息技术部</p>
+        </div>
+    </footer>
+
+    <!-- 引用外部JavaScript文件 -->
+    <script src="js/main.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>

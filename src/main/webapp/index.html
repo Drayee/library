@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四川农业大学图书馆</title>
+    <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+    <!-- 页面头部 -->
+    <div class="header">
+        <!-- 添加学校图标 -->
+        <div class="logo-container">
+            <div class="logo-background"></div>
+            <a href="https://webvpn.sicau.edu.cn/https/77726476706e69737468656265737421e7e056d234396b516b468ca88d1b203b/" target="_blank" class="logo-link">
+                <img src="image/icon/SchoolLogoStart.png" alt="四川农业大学校徽" class="school-logo">
+            </a>
+        </div>
+        <h1>四川农业大学图书馆</h1>
+    </div>
+    
+    <!-- 主内容区 - 移除白色框框 -->
+    <!-- 开始按钮 -->
+    <div id="start-container" class="start-container">
+        <button id="startBtn" class="btn start-btn">开始</button>
+    </div>
+    
+    <!-- 登录/注册按钮区域（默认隐藏） -->
+    <div id="auth-container" class="auth-container" style="display: none;">
+        <div class="auth-buttons">
+            <button id="loginBtn" class="btn">登录</button>
+            <button id="registerBtn" class="btn">注册</button>
+        </div>
+    </div>
+    
+    <!-- 模态框容器 -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>用户注册</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">用户名：</label>
+                    <input type="text" id="username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码：</label>
+                    <input type="password" id="password" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码：</label>
+                    <input type="password" id="confirmPassword" placeholder="请再次输入密码">
+                </div>
+                <div class="form-group">
+                    <button type="submit">注册</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>用户登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">用户名：</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码：</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <button type="submit">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="footer">
+        <p>&copy; 2024 四川农业大学图书馆</p>
+    </div>
+    
+    <!-- 引用外部JavaScript文件 -->
+    <script src="js/main.js"></script>
+</body>
+</html>

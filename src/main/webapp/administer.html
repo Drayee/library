@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员系统 - 四川农业大学图书馆</title>
+    <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/administer.css">
+</head>
+<body>
+    <!-- 登录模态框 - 默认显示 -->
+    <div id="loginModal" class="modal" style="display: block;">
+        <div class="modal-content">
+            <h3>管理员登录</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="adminUsername" placeholder="管理员账号" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="adminPassword" placeholder="密码" required>
+                </div>
+                <button type="submit" class="action-btn">登录</button>
+            </form>
+            <div id="loginMessage" class="message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- 管理员界面 - 默认隐藏 -->
+    <div id="adminInterface" style="display: none;">
+        <!-- 顶部导航栏 -->
+        <nav class="top-nav">
+            <div class="nav-container">
+                <!-- 学校图标 -->
+                <div class="nav-logo">
+                    <a href="https://webvpn.sicau.edu.cn/https/77726476706e69737468656265737421e7e056d234396b516b468ca88d1b203b/" target="_blank" class="logo-link">
+                        <img src="image/icon/SchoolLogoStart.png" alt="四川农业大学校徽" class="school-logo">
+                    </a>
+                </div>
+                
+                <!-- 页面标题 -->
+                <div class="page-title">
+                    <h1>图书馆管理系统</h1>
+                </div>
+                
+                <!-- 用户信息 -->
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <div class="avatar-placeholder" id="adminAvatar">管</div>
+                    </div>
+                    <span class="username" id="adminName">管理员</span>
+                    <div class="user-dropdown">
+                        <button class="dropdown-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" id="logoutBtn">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 欢迎横幅 -->
+            <section class="welcome-banner">
+                <div class="banner-content">
+                    <h1 id="welcomeTitle">欢迎使用管理员系统</h1>
+                    <p>图书馆数据管理中心</p>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalUsers">0</span>
+                            <span class="stat-label">总用户数</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalBooks">0</span>
+                            <span class="stat-label">总图书数</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="borrowedBooks">0</span>
+                            <span class="stat-label">借出图书</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 功能选项卡 -->
+            <section class="tab-section">
+                <div class="tab-container">
+                    <button class="tab-btn active" data-tab="users">用户管理</button>
+                    <button class="tab-btn" data-tab="books">图书管理</button>
+                    <button class="tab-btn" data-tab="borrow">借阅管理</button>
+                    <button class="tab-btn" data-tab="add">添加数据</button>
+                </div>
+
+                <!-- 用户管理内容 -->
+                <div class="tab-content active" id="users">
+                    <div class="tab-header">
+                        <h2>用户管理</h2>
+                        <div class="search-container">
+                            <input type="text" id="userSearch" placeholder="搜索用户..." class="search-input">
+                            <button id="searchUserBtn" class="search-btn">搜索</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>用户ID</th>
+                                    <th>姓名</th>
+                                    <th>学号</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- 用户数据将通过JavaScript动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 图书管理内容 -->
+                <div class="tab-content" id="books">
+                    <div class="tab-header">
+                        <h2>图书管理</h2>
+                        <div class="search-container">
+                            <input type="text" id="bookSearch" placeholder="搜索图书..." class="search-input">
+                            <button id="searchBookBtn" class="search-btn">搜索</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>图书ID</th>
+                                    <th>书名</th>
+                                    <th>作者</th>
+                                    <th>ISBN</th>
+                                    <th>库存</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookTableBody">
+                                <!-- 图书数据将通过JavaScript动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 借阅管理内容 -->
+                <div class="tab-content" id="borrow">
+                    <div class="tab-header">
+                        <h2>借阅管理</h2>
+                        <div class="search-container">
+                            <input type="text" id="borrowSearch" placeholder="搜索借阅记录..." class="search-input">
+                            <button id="searchBorrowBtn" class="search-btn">搜索</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>借阅ID</th>
+                                    <th>用户ID</th>
+                                    <th>图书ID</th>
+                                    <th>借阅日期</th>
+                                    <th>应还日期</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="borrowTableBody">
+                                <!-- 借阅数据将通过JavaScript动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 添加数据内容 -->
+                <div class="tab-content" id="add">
+                    <div class="add-data-section">
+                        <div class="add-user-form">
+                            <h3>添加用户</h3>
+                            <form id="addUserForm">
+                                <div class="form-group">
+                                    <input type="text" id="userName" placeholder="姓名" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="userNumber" placeholder="学号" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" id="userEmail" placeholder="邮箱" required>
+                                </div>
+                                <button type="submit" class="action-btn">添加用户</button>
+                            </form>
+                        </div>
+
+                        <div class="add-book-form">
+                            <h3>添加图书</h3>
+                            <form id="addBookForm">
+                                <div class="form-group">
+                                    <input type="text" id="bookTitle" placeholder="书名" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="bookAuthor" placeholder="作者" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="bookISBN" placeholder="ISBN" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="bookStock" placeholder="库存数量" required>
+                                </div>
+                                <button type="submit" class="action-btn">添加图书</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 编辑模态框 -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3 id="modalTitle">编辑信息</h3>
+                <form id="editForm">
+                    <div id="modalFormContent">
+                        <!-- 表单内容将通过JavaScript动态加载 -->
+                    </div>
+                    <button type="submit" class="action-btn">保存修改</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局消息容器 -->
+    <div id="globalMessage" class="message" style="display: none;"></div>
+
+    <!-- 引用外部JavaScript文件 -->
+    <script src="js/administer.js"></script>
+</body>
+</html>

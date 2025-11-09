@@ -1,0 +1,892 @@
+/* 顶部导航栏样式 */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    display: flex;
+align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 导航栏Logo */
+.nav-logo .school-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(42, 126, 63, 0.3);
+    transition: all 0.3s ease;
+}
+
+.nav-logo .school-logo:hover {
+    transform: scale(1.1);
+    border-color: rgba(42, 126, 63, 0.6);
+    box-shadow: 0 4px 15px rgba(42, 126, 63, 0.3);
+}
+
+/* 搜索栏样式 */
+.search-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+padding: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    flex: 0 1 400px;
+    border: 1px solid rgba(42, 126, 63, 0.2);
+}
+
+.search-container:focus-within {
+    box-shadow: 0 4px 20px rgba(42, 126, 63, 0.3);
+    transform: translateY(-2px);
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 12px 20px;
+    background: transparent;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 25px;
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #3a9e4f, #2e6b40);
+}
+
+/* 用户信息样式 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(42, 126, 63, 0.3);
+    transition: all 0.3s ease;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar:hover {
+    border-color: rgba(42, 126, 63, 0.6);
+    transform: scale(1.05);
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.dropdown-btn:hover {
+    color: #2a7e3f;
+    background: rgba(42, 126, 63, 0.1);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    min-width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.user-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(42, 126, 63, 0.1);
+    color: #2a7e3f;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #eee;
+    margin: 5px 0;
+}
+
+/* 主要内容区域 */
+.main-content {
+    margin-top: 80px;
+    padding: 40px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    /* 移除max-height限制，让内容自然扩展 */
+}
+
+/* 欢迎横幅 */
+.welcome-banner {
+    background: linear-gradient(135deg, rgba(42, 126, 63, 0.9), rgba(30, 91, 48, 0.9));
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideInUp 0.8s ease;
+}
+
+.banner-content h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.banner-content p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.stats-container {
+    display: flex;
+    gap: 40px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* 选项卡样式 */
+.tab-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: slideInUp 0.8s ease 0.2s both;
+    /* 移除max-height限制，让选项卡区域自然扩展 */
+}
+
+.tab-container {
+    display: flex;
+gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    font-size: 16px;
+    cursor: pointer;
+transition: all 0.3s ease;
+    color: #666;
+    position: relative;
+}
+
+.tab-btn.active {
+    color: #2a7e3f;
+    background: rgba(42, 126, 63, 0.1);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #2a7e3f;
+}
+
+.tab-btn:hover:not(.active) {
+    color: #2a7e3f;
+    background: rgba(42, 126, 63, 0.05);
+}
+
+/* 修复选项卡内容显示问题 - 移除高度限制 */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+    /* 移除max-height限制，让内容自然扩展 */
+    overflow-y: visible; /* 改为visible而不是auto */
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 修复主要内容区域 */
+.main-content {
+    margin-top: 80px;
+    padding: 40px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    min-height: calc(100vh - 160px); /* 确保内容区域有足够高度 */
+}
+
+/* 修复选项卡区域 */
+.tab-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: slideInUp 0.8s ease 0.2s both;
+    /* 移除所有高度限制 */
+    min-height: auto;
+}
+
+/* 修复书籍网格布局 */
+.books-grid, .recommendation-grid, .favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    /* 移除高度限制 */
+    min-height: auto;
+}
+
+/* 修复阅读历史列表 */
+.books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* 移除高度限制 */
+    min-height: auto;
+}
+
+/* 修复页面整体布局 - 确保可以滚动 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto; /* 确保可以垂直滚动 */
+}
+
+body {
+    min-height: 100vh;
+    position: relative;
+}
+
+/* 修复主要内容区域 - 统一设置 */
+.main-content {
+margin-top: 80px;
+    padding: 40px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    min-height: calc(100vh - 160px);
+}
+
+/* 修复选项卡区域 - 统一设置 */
+.tab-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: slideInUp 0.8s ease 0.2s both;
+    min-height: auto;
+}
+
+/* 修复选项卡内容显示 - 确保内容自然扩展 */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+    padding: 20px 0;
+    /* 移除所有高度限制，让内容自然扩展 */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 修复书籍网格布局 */
+.books-grid, .recommendation-grid, .favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    min-height: auto;
+}
+
+/* 修复阅读历史列表 */
+.books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: auto;
+}
+
+/* 修复底部间距 */
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    margin-top: 60px;
+    padding: 40px 0 20px;
+    border-top: 2px solid #eee;
+    position: relative;
+}
+
+/* 删除重复和冲突的样式定义 */
+/* 删除以下重复的定义：
+- 第二个 .main-content 定义
+- 第二个 .tab-section 定义  
+- 第二个 .books-grid 定义
+- 第二个 .books-list 定义
+*/
+
+/* 修复移动端显示 */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px;
+        margin-top: 100px;
+        min-height: calc(100vh - 140px);
+    }
+    
+    .tab-section {
+        padding: 20px;
+    }
+    
+    .books-grid, .recommendation-grid, .favorites-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+.tab-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+/* 书籍网格和卡片样式 */
+.books-grid, .recommendation-grid, .favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.book-card, .recommend-card, .favorite-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    gap: 15px;
+}
+
+.book-card:hover, .recommend-card:hover, .favorite-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover {
+    width: 80px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    padding: 5px;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-info h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.book-author {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* 修复移动端响应式问题 */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .search-container {
+        flex: 1 1 100%;
+        order: 3;
+        margin-top: 10px;
+        max-width: 100%;
+    }
+    
+    .main-content {
+        padding: 15px;
+        margin-top: 100px;
+    }
+    
+.books-grid, .recommendation-grid, .favorites-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .book-card, .recommend-card, .favorite-card {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .book-cover {
+        width: 60px;
+        height: 80px;
+        margin: 0 auto 10px;
+    }
+}
+
+/* 新增移动端菜单按钮样式 */
+.mobile-menu-btn {
+    display: none;
+    background: #2a7e3f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: #1e5b30;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .user-info, .search-container {
+        display: none;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .user-info.show, .search-container.show {
+        display: flex;
+    }
+}
+
+.book-due, .read-date, .favorite-date, .recommend-reason {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+/* 操作按钮样式 */
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+
+.renew-btn {
+    background: #2a7e3f;
+    color: white;
+}
+
+.renew-btn:hover {
+    background: #1e5b30;
+    transform: translateY(-2px);
+}
+
+.borrow-btn {
+    background: #ff6b35;
+    color: white;
+}
+
+.borrow-btn:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+}
+
+.remove-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+/* 阅读历史列表样式 */
+.books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover-small {
+    width: 60px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+    color: white;
+    font-weight: bold;
+    font-size: 10px;
+    text-align: center;
+    padding: 3px;
+}
+
+.book-cover-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-info h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.rating {
+    margin-top: 5px;
+}
+
+.stars {
+    color: #ffc107;
+    font-size: 14px;
+}
+
+/* 底部样式 */
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    margin-top: 60px;
+    padding: 40px 0 20px;
+    border-top: 2px solid #eee;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-section h3 {
+    color: #2a7e3f;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-section p {
+    color: #666;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #888;
+    font-size: 14px;
+}
+
+/* 滚动条样式 - 修复并增强 */
+.tab-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+    background: rgba(42, 126, 63, 0.1);
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+    border-radius: 5px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3a9e4f, #2e6b40);
+    transform: scale(1.1);
+}
+
+/* 页面整体滚动条 */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    /* 确保body可以滚动 */
+    height: auto;
+    min-height: 100vh;
+}
+
+/* 滚动到顶部按钮 */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+    background: linear-gradient(135deg, #3a9e4f, #2e6b40);
+    transform: translateY(-2px);
+}
+
+/* 动画关键帧 */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .search-container {
+        flex: 1 1 100%;
+        order: 3;
+        margin-top: 10px;
+    }
+    
+    .main-content {
+        padding: 20px;
+        margin-top: 120px;
+    }
+    
+    .stats-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tab-container {
+        flex-wrap: wrap;
+    }
+    
+    .books-grid, .recommendation-grid, .favorites-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 0 20px;
+    }
+    
+    .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+}
+
+/* 用户名显示样式优化 */
+.username {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 头像占位符样式优化 */
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #2a7e3f, #1e5b30);
+}
+
+@media (max-width: 768px) {
+    .username {
+        max-width: 80px;
+        font-size: 14px;
+    }
+    
+    .avatar-placeholder {
+        font-size: 16px;
+    }
+}
