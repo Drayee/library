@@ -34,8 +34,7 @@ public class UserDataBase extends DataBaseLoad {
             PreparedStatement check_pstmt = conn.prepareStatement(check_pstmts);
             check_pstmt.setString(1, user);
             check_pstmt.setInt(2, uniquecode);
-            return true;
-            //return check_pstmt.executeQuery().next();
+            return check_pstmt.executeQuery().next();
         } catch (SQLException e) {
             return false;
         }

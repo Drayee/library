@@ -48,10 +48,23 @@ function initTabs() {
             // 滚动到选项卡区域
             document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth' });
 
-            // 加载对应数据
-            loadTabData(tabId);
+            // 加载对应数据 - 确保数据正确加载
+            setTimeout(() => {
+                loadTabData(tabId);
+                // 重新绑定该选项卡的事件
+                rebindTabEvents(tabId);
+            }, 50);
         });
     });
+}
+
+// 重新绑定选项卡特定事件
+function rebindTabEvents(tabId) {
+    // 确保该选项卡的搜索功能正常工作
+    setTimeout(() => {
+        bindSearchEvents();
+        fixAllInputElements();
+    }, 100);
 }
 
 // 检查登录状态
@@ -120,7 +133,7 @@ if (response.ok) {
         } else {
             showMessage('登录失败：服务器错误', 'error');
             // 登录失败时重定向到/Library
-            setTimeout(() => {
+setTimeout(() => {
                 window.location.href = '/Library';
             }, 2000);
         }
@@ -361,14 +374,118 @@ function searchBorrow() {
     displayBorrowRecords(filteredRecords);
 }
 
-// 页面加载完成后初始化
+// 页面加载完成后初始化 - 修复重复初始化问题
 document.addEventListener('DOMContentLoaded', function() {
-    initializePage();
-    setupEventListeners(); // 只保留一次调用
-    checkLoginStatus();
+    // 单一初始化入口
+    initApplication();
 });
 
-// 设置事件监听器
+// 单一初始化函数
+async function initApplication() {
+    await initializePage();
+    await setupEventListeners();
+    await checkLoginStatus();
+}
+
+// 初始化页面
+function initializePage() {
+    // 默认显示登录界面，隐藏管理员界面
+    document.getElementById('adminInterface').style.display = 'none';
+    document.getElementById('loginModal').style.display = 'block';
+
+    // 初始化选项卡功能
+    initTabs();
+    
+    console.log('页面初始化完成');
+}
+
+// 显示管理员界面 - 关键修复：重新绑定事件
+function showAdminInterface() {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('adminInterface').style.display = 'block';
+    document.getElementById('adminName').textContent = currentUser.username;
+    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
+    
+    // 关键修复：重新绑定事件，确保搜索功能可用
+    setTimeout(() => {
+        rebindSearchEvents();
+        fixAllInputElements();
+        console.log('管理员界面事件重新绑定完成');
+    }, 100);
+}
+
+// 重新绑定搜索相关事件
+function rebindSearchEvents() {
+    // 移除之前的事件监听器
+    const searchUserBtn = document.getElementById('searchUserBtn');
+    const searchBookBtn = document.getElementById('searchBookBtn');
+    const searchBorrowBtn = document.getElementById('searchBorrowBtn');
+    
+    if (searchUserBtn) {
+        searchUserBtn.replaceWith(searchUserBtn.cloneNode(true));
+    }
+    if (searchBookBtn) {
+        searchBookBtn.replaceWith(searchBookBtn.cloneNode(true));
+    }
+    if (searchBorrowBtn) {
+        searchBorrowBtn.replaceWith(searchBorrowBtn.cloneNode(true));
+    }
+    
+    // 重新绑定事件
+    bindSearchEvents();
+}
+
+// 增强事件绑定健壮性 - 使用事件委托
+function bindSearchEvents() {
+    // 使用事件委托，避免动态显示问题
+    document.addEventListener('click', function(event) {
+        if (event.target.id === 'searchUserBtn') {
+            event.preventDefault();
+            searchUsers();
+        }
+        if (event.target.id === 'searchBookBtn') {
+            event.preventDefault();
+            searchBooks();
+        }
+        if (event.target.id === 'searchBorrowBtn') {
+            event.preventDefault();
+            searchBorrow();
+        }
+    });
+    
+    // 搜索输入框回车键支持
+    document.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            if (event.target.id === 'userSearch') {
+                event.preventDefault();
+                searchUsers();
+            }
+            if (event.target.id === 'bookSearch') {
+                event.preventDefault();
+                searchBooks();
+            }
+            if (event.target.id === 'borrowSearch') {
+                event.preventDefault();
+                searchBorrow();
+            }
+        }
+    });
+    
+    console.log('搜索事件绑定完成');
+}
+
+// 修复所有输入元素的可点击性
+function fixAllInputElements() {
+    const inputs = document.querySelectorAll('input, button, select, textarea');
+    inputs.forEach(input => {
+        input.style.pointerEvents = 'auto';
+        input.style.userSelect = 'auto';
+        input.style.opacity = '1';
+        input.disabled = false;
+    });
+}
+
+// 设置事件监听器 - 优化版本
 function setupEventListeners() {
     // 延迟执行以确保DOM元素已加载
     setTimeout(() => {
@@ -384,49 +501,8 @@ function setupEventListeners() {
             logoutBtn.addEventListener('click', handleLogout);
         }
 
-        // 搜索功能
-        const searchUserBtn = document.getElementById('searchUserBtn');
-        if (searchUserBtn) {
-            searchUserBtn.addEventListener('click', searchUsers);
-        }
-
-        const searchBookBtn = document.getElementById('searchBookBtn');
-        if (searchBookBtn) {
-            searchBookBtn.addEventListener('click', searchBooks);
-        }
-
-        const searchBorrowBtn = document.getElementById('searchBorrowBtn');
-        if (searchBorrowBtn) {
-            searchBorrowBtn.addEventListener('click', searchBorrow);
-        }
-
-        // 搜索输入框回车键支持
-        const userSearch = document.getElementById('userSearch');
-        if (userSearch) {
-            userSearch.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    searchUsers();
-                }
-            });
-        }
-
-        const bookSearch = document.getElementById('bookSearch');
-        if (bookSearch) {
-            bookSearch.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    searchBooks();
-                }
-            });
-        }
-
-        const borrowSearch = document.getElementById('borrowSearch');
-        if (borrowSearch) {
-            borrowSearch.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    searchBorrow();
-                }
-            });
-        }
+        // 使用事件委托绑定搜索功能
+        bindSearchEvents();
 
         // 添加数据表单
         const addUserForm = document.getElementById('addUserForm');
@@ -463,6 +539,14 @@ function setupEventListeners() {
         console.log('事件监听器设置完成');
     }, 100);
 }
+
+// 移除重复的DOMContentLoaded监听器（如果存在）
+// 删除以下重复代码：
+// document.addEventListener('DOMContentLoaded', function() {
+//     initializePage();
+//     setupEventListeners(); // 只保留一次调用
+//     checkLoginStatus();
+// });
 
 // 编辑用户
 function editUser(userId) {

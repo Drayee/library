@@ -69,6 +69,7 @@ public class Administer extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 
+
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {

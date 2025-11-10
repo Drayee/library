@@ -122,6 +122,7 @@
     margin-top: 30px;
 }
 
+/* 选项卡容器样式 - 修复z-index问题 */
 .tab-container {
     display: flex;
     background: white;
@@ -131,7 +132,63 @@
     margin-bottom: 20px;
     position: sticky;
     top: 100px;
-    z-index: 100;
+    z-index: 10; /* 降低z-index避免遮挡 */
+}
+
+/* 搜索容器样式 - 确保正确层级 */
+.search-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+    z-index: 5; /* 确保搜索元素在正确层级 */
+}
+
+/* 确保搜索输入框样式正确 */
+.search-input {
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: white;
+    min-width: 300px;
+    pointer-events: auto; /* 移除!important */
+    user-select: auto; /* 移除!important */
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2a7e3f;
+    box-shadow: 0 0 0 3px rgba(42, 126, 63, 0.1);
+}
+
+.search-input:not([disabled]) {
+    pointer-events: auto;
+    user-select: auto;
+    opacity: 1;
+}
+
+/* 搜索按钮样式 */
+.search-btn {
+    padding: 10px 20px;
+    background: #2a7e3f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    pointer-events: auto; /* 确保按钮可点击 */
+}
+
+.search-btn:hover {
+    background: #246b35;
+    transform: translateY(-1px);
+}
+
+.search-btn:active {
+    transform: translateY(0);
 }
 
 .tab-btn {
