@@ -1,5 +1,6 @@
 package com.library.database;
 
+import com.library.userClass.BookType;
 import com.library.userClass.Detail;
 
 import java.sql.Array;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 public class BookShelfBase extends DataBaseLoad {
     private final String get_book_sql = "SELECT name FROM " + table_name + " WHERE idbook = ?";
     private final String add_bool_sql = "INSERT INTO " + table_name + " (bookname,booknum,bookadddate,booklender,booktype,bookaddress,bookauthor) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+    private final String get_book_detail_sql = "SELECT * FROM " + table_name;
 
     public BookShelfBase() {
         super("bookshelflibrary");
@@ -49,6 +50,30 @@ public class BookShelfBase extends DataBaseLoad {
             }
         }
         return true;
+    }
+
+    public Detail[] getBookDetails(int bookId) {
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(get_book_detail_sql);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new Detail[]{
+                        new Detail(
+                                new int[]{bookId},
+                                rs.getString("bookname"),
+                                rs.getInt("booknum"),
+                                rs.getInt("booklender"),
+                                rs.getString("bookauthor"),
+                                new int[][]{Arrays.stream(rs.getString("bookaddress").substring(1, rs.getString("bookaddress").length() - 1).split(",")).mapToInt(Integer::parseInt).toArray()},
+                                Arrays.stream(rs.getString("booktype").split(",")).map(BookType::valueOf).toArray(BookType[]::new),
+                                rs.getDate("bookadddate")
+                        )
+                };
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return null;
     }
 
     @Override

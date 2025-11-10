@@ -196,6 +196,7 @@
     align-items: center;
 }
 
+/* 确保搜索输入框样式正确 */
 .search-input {
     padding: 10px 15px;
     border: 2px solid #ddd;
@@ -203,6 +204,12 @@
     font-size: 14px;
     width: 250px;
     transition: all 0.3s ease;
+    /* 确保输入框可交互 */
+    pointer-events: auto !important;
+    user-select: auto !important;
+    opacity: 1 !important;
+    background-color: white !important;
+    cursor: text !important;
 }
 
 .search-input:focus {
@@ -211,6 +218,14 @@
     box-shadow: 0 0 0 3px rgba(42, 126, 63, 0.1);
 }
 
+/* 确保所有输入框都能正常工作 */
+input, textarea, select {
+    pointer-events: auto !important;
+    user-select: auto !important;
+    opacity: 1 !important;
+    background-color: white !important;
+    cursor: text !important;
+}
 .search-btn {
     padding: 10px 20px;
     background: #2a7e3f;
@@ -320,9 +335,46 @@
     font-size: 20px;
 }
 
-/* 表单组样式 */
+/* 表单组样式增强 */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group.focused {
+    transform: translateY(-2px);
+}
+
+.form-group.valid input,
+.form-group.valid select {
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.form-group.invalid input,
+.form-group.invalid select {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-group.valid::after {
+    content: '✓';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #28a745;
+    font-weight: bold;
+}
+
+.form-group.invalid::after {
+    content: '✗';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #dc3545;
+    font-weight: bold;
 }
 
 .form-group input, .form-group select {
