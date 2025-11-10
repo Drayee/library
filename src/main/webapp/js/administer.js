@@ -414,7 +414,7 @@ function showAdminInterface() {
     }, 100);
 }
 
-// 重新绑定搜索相关事件
+// 重新绑定搜索相关事件 - 增强版本
 function rebindSearchEvents() {
     // 移除之前的事件监听器
     const searchUserBtn = document.getElementById('searchUserBtn');
@@ -433,59 +433,84 @@ function rebindSearchEvents() {
     
     // 重新绑定事件
     bindSearchEvents();
+    // 新增：绑定添加数据表单事件
+    bindAddFormEvents();
 }
 
-// 增强事件绑定健壮性 - 使用事件委托
-function bindSearchEvents() {
-    // 使用事件委托，避免动态显示问题
-    document.addEventListener('click', function(event) {
-        if (event.target.id === 'searchUserBtn') {
+// 新增：专门绑定添加数据表单事件
+function bindAddFormEvents() {
+    // 使用事件委托绑定添加表单
+    document.addEventListener('submit', function(event) {
+        if (event.target.id === 'addUserForm') {
             event.preventDefault();
-            searchUsers();
+            addUser();
         }
-        if (event.target.id === 'searchBookBtn') {
+        if (event.target.id === 'addBookForm') {
             event.preventDefault();
-            searchBooks();
-        }
-        if (event.target.id === 'searchBorrowBtn') {
-            event.preventDefault();
-            searchBorrow();
+            addBook();
         }
     });
     
-    // 搜索输入框回车键支持
-    document.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            if (event.target.id === 'userSearch') {
-                event.preventDefault();
-                searchUsers();
-            }
-            if (event.target.id === 'bookSearch') {
-                event.preventDefault();
-                searchBooks();
-            }
-            if (event.target.id === 'borrowSearch') {
-                event.preventDefault();
-                searchBorrow();
-            }
-        }
-    });
-    
-    console.log('搜索事件绑定完成');
+    // 修复添加数据表单的输入框可点击性
+    fixAddFormInputs();
 }
 
-// 修复所有输入元素的可点击性
-function fixAllInputElements() {
-    const inputs = document.querySelectorAll('input, button, select, textarea');
-    inputs.forEach(input => {
+// 新增：专门修复添加数据表单的输入框
+function fixAddFormInputs() {
+    const addFormInputs = document.querySelectorAll('#addUserForm input, #addBookForm input, #addUserForm button, #addBookForm button');
+    addFormInputs.forEach(input => {
         input.style.pointerEvents = 'auto';
         input.style.userSelect = 'auto';
         input.style.opacity = '1';
         input.disabled = false;
+        
+        // 确保输入框有正确的焦点样式
+        input.addEventListener('focus', function() {
+            this.style.borderColor = '#2a7e3f';
+            this.style.boxShadow = '0 0 0 3px rgba(42, 126, 63, 0.1)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.style.borderColor = '#e0e0e0';
+            this.style.boxShadow = 'none';
+        });
     });
+    
+    console.log('添加数据表单输入框修复完成');
 }
 
-// 设置事件监听器 - 优化版本
+// 重新绑定选项卡特定事件 - 增强版本
+function rebindTabEvents(tabId) {
+    // 确保该选项卡的搜索功能正常工作
+    setTimeout(() => {
+        bindSearchEvents();
+        fixAllInputElements();
+        
+        // 如果是添加数据选项卡，额外修复表单
+        if (tabId === 'add') {
+            bindAddFormEvents();
+            fixAddFormInputs();
+        }
+    }, 100);
+}
+
+// 显示管理员界面 - 增强版本
+function showAdminInterface() {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('adminInterface').style.display = 'block';
+    document.getElementById('adminName').textContent = currentUser.username;
+    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
+    
+    // 关键修复：重新绑定事件，确保所有功能可用
+    setTimeout(() => {
+        rebindSearchEvents();
+        fixAllInputElements();
+        bindAddFormEvents(); // 新增：确保添加表单事件绑定
+        console.log('管理员界面事件重新绑定完成');
+    }, 100);
+}
+
+// 设置事件监听器 - 优化版本（确保添加表单事件绑定）
 function setupEventListeners() {
     // 延迟执行以确保DOM元素已加载
     setTimeout(() => {
@@ -503,8 +528,11 @@ function setupEventListeners() {
 
         // 使用事件委托绑定搜索功能
         bindSearchEvents();
+        
+        // 新增：绑定添加数据表单事件
+        bindAddFormEvents();
 
-        // 添加数据表单
+        // 添加数据表单（保留原有绑定作为备用）
         const addUserForm = document.getElementById('addUserForm');
         if (addUserForm) {
             addUserForm.addEventListener('submit', addUser);
