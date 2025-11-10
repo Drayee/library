@@ -13,21 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     checkLoginStatus();
 });
 
-// 初始化页面
-function initializePage() {
-    // 默认显示登录界面，隐藏管理员界面
-    document.getElementById('adminInterface').style.display = 'none';
-    document.getElementById('loginModal').style.display = 'block';
-
-    // 初始化选项卡功能
-    initTabs();
-}
-
-// 绑定所有事件监听器
-// 绑定登录相关事件
-// 绑定搜索相关事件
-// 绑定表单相关事件
-// 绑定其他事件
 // 初始化选项卡功能
 function initTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -56,15 +41,6 @@ function initTabs() {
             }, 50);
         });
     });
-}
-
-// 重新绑定选项卡特定事件
-function rebindTabEvents(tabId) {
-    // 确保该选项卡的搜索功能正常工作
-    setTimeout(() => {
-        bindSearchEvents();
-        fixAllInputElements();
-    }, 100);
 }
 
 // 检查登录状态
@@ -154,14 +130,6 @@ function handleLogout() {
     showMessage('已退出登录', 'success');
 }
 
-// 显示管理员界面
-function showAdminInterface() {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('adminInterface').style.display = 'block';
-    document.getElementById('adminName').textContent = currentUser.username;
-    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
-}
-
 // 显示登录界面
 function showLoginInterface() {
     document.getElementById('adminInterface').style.display = 'none';
@@ -190,7 +158,7 @@ async function loadUsers() {
             })
         });
 
-        if (response.ok) {
+if (response.ok) {
             const result = await response.json();
             usersData = result.data || [];
             displayUsers(usersData);
@@ -290,7 +258,7 @@ function displayBooks(books) {
                 <button class="action-btn delete" onclick="deleteBook(${book.id})">删除</button>
             </td>
         `;
-        tbody.appendChild(row);
+tbody.appendChild(row);
     });
 }
 
@@ -399,21 +367,6 @@ function initializePage() {
     console.log('页面初始化完成');
 }
 
-// 显示管理员界面 - 关键修复：重新绑定事件
-function showAdminInterface() {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('adminInterface').style.display = 'block';
-    document.getElementById('adminName').textContent = currentUser.username;
-    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
-    
-    // 关键修复：重新绑定事件，确保搜索功能可用
-    setTimeout(() => {
-        rebindSearchEvents();
-        fixAllInputElements();
-        console.log('管理员界面事件重新绑定完成');
-    }, 100);
-}
-
 // 重新绑定搜索相关事件 - 增强版本
 function rebindSearchEvents() {
     // 移除之前的事件监听器
@@ -494,68 +447,113 @@ function rebindTabEvents(tabId) {
     }, 100);
 }
 
-// 显示管理员界面 - 增强版本
+// 显示管理员界面 - 彻底修复版本
 function showAdminInterface() {
+    console.log('显示管理员界面...');
+    
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('adminInterface').style.display = 'block';
     document.getElementById('adminName').textContent = currentUser.username;
     document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
     
-    // 关键修复：重新绑定事件，确保所有功能可用
+    // 关键修复：重新绑定所有事件，确保功能可用
     setTimeout(() => {
+        console.log('重新绑定管理员界面事件...');
         rebindSearchEvents();
         fixAllInputElements();
-        bindAddFormEvents(); // 新增：确保添加表单事件绑定
+        bindAddFormEvents();
+        
+        // 特别修复添加数据选项卡的输入框
+        const addTab = document.getElementById('add');
+        if (addTab && addTab.classList.contains('active')) {
+            console.log('当前在添加数据选项卡，特别修复...');
+            fixAddFormInputs();
+        }
+        
         console.log('管理员界面事件重新绑定完成');
+    }, 200);
+}
+
+// 重新绑定选项卡特定事件
+function rebindTabEvents(tabId) {
+    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
+    
+    // 确保该选项卡的搜索功能正常工作
+    setTimeout(() => {
+        bindSearchEvents();
+        fixAllInputElements();
+        
+        // 如果是添加数据选项卡，额外修复表单
+        if (tabId === 'add') {
+            console.log('特别修复添加数据选项卡...');
+            bindAddFormEvents();
+            fixAddFormInputs();
+        }
     }, 100);
 }
 
 // 设置事件监听器 - 优化版本（确保添加表单事件绑定）
+// 修改setupEventListeners函数，确保正确绑定添加表单事件
 function setupEventListeners() {
     // 延迟执行以确保DOM元素已加载
     setTimeout(() => {
+        console.log('开始设置事件监听器...');
+        
         // 登录表单
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', handleLogin);
+            console.log('登录表单事件绑定完成');
         }
 
         // 退出登录
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', handleLogout);
+            console.log('退出登录事件绑定完成');
         }
 
         // 使用事件委托绑定搜索功能
         bindSearchEvents();
         
-        // 新增：绑定添加数据表单事件
+        // 绑定添加数据表单事件
         bindAddFormEvents();
 
-        // 添加数据表单（保留原有绑定作为备用）
+        // 添加数据表单（直接绑定作为主要方式）
         const addUserForm = document.getElementById('addUserForm');
         if (addUserForm) {
-            addUserForm.addEventListener('submit', addUser);
+            // 移除旧的事件监听器（如果有）
+            addUserForm.replaceWith(addUserForm.cloneNode(true));
+            // 重新绑定
+            document.getElementById('addUserForm').addEventListener('submit', addUser);
+            console.log('添加用户表单事件绑定完成');
         }
 
         const addBookForm = document.getElementById('addBookForm');
         if (addBookForm) {
-            addBookForm.addEventListener('submit', addBook);
+            // 移除旧的事件监听器（如果有）
+            addBookForm.replaceWith(addBookForm.cloneNode(true));
+            // 重新绑定
+            document.getElementById('addBookForm').addEventListener('submit', addBook);
+            console.log('添加图书表单事件绑定完成');
         }
 
         // 编辑表单提交
         const editForm = document.getElementById('editForm');
         if (editForm) {
             editForm.addEventListener('submit', handleEdit);
+            console.log('编辑表单事件绑定完成');
         }
 
         // 页面滚动监听
         window.addEventListener('scroll', handleScroll);
+        console.log('页面滚动事件绑定完成');
 
         // 关闭模态框
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', closeModal);
         });
+        console.log('关闭按钮事件绑定完成');
 
         // 点击模态框外部关闭
         window.addEventListener('click', function(event) {
@@ -564,17 +562,137 @@ function setupEventListeners() {
             }
         });
 
-        console.log('事件监听器设置完成');
+        console.log('所有事件监听器设置完成');
+    }, 100);
+}
+// 增强的绑定添加表单事件函数
+function bindAddFormEvents() {
+    console.log('开始绑定添加表单事件...');
+    
+    // 使用事件委托绑定添加表单
+    document.addEventListener('submit', function(event) {
+        console.log('表单提交事件触发:', event.target.id);
+        
+        if (event.target.id === 'addUserForm') {
+            event.preventDefault();
+            console.log('处理添加用户表单提交');
+            addUser(event);
+        }
+        if (event.target.id === 'addBookForm') {
+            event.preventDefault();
+            console.log('处理添加图书表单提交');
+            addBook(event);
+        }
+    });
+    
+    // 修复添加数据表单的输入框可点击性
+    fixAddFormInputs();
+    console.log('添加表单事件绑定完成');
+}
+
+// 专门修复添加数据表单的输入框
+function fixAddFormInputs() {
+    console.log('开始修复添加表单输入框...');
+    
+    const addFormInputs = document.querySelectorAll('#addUserForm input, #addBookForm input, #addUserForm button, #addBookForm button');
+    console.log(`找到 ${addFormInputs.length} 个添加表单元素`);
+    
+    addFormInputs.forEach((input, index) => {
+        console.log(`修复添加表单元素 ${index + 1}:`, {
+            id: input.id,
+            tagName: input.tagName,
+            type: input.type
+        });
+        
+        // 确保元素可点击
+        input.style.pointerEvents = 'auto';
+        input.style.userSelect = 'auto';
+        input.style.opacity = '1';
+        input.disabled = false;
+        input.readOnly = false;
+        
+        // 添加调试事件监听器
+        input.addEventListener('click', function() {
+            console.log('添加表单元素被点击:', this.id || this.name || '未命名元素');
+        });
+        
+        input.addEventListener('focus', function() {
+            console.log('添加表单元素获得焦点:', this.id || this.name || '未命名元素');
+            this.style.borderColor = '#2a7e3f';
+            this.style.boxShadow = '0 0 0 3px rgba(42, 126, 63, 0.1)';
+        });
+        
+        input.addEventListener('blur', function() {
+            console.log('添加表单元素失去焦点:', this.id || this.name || '未命名元素');
+            this.style.borderColor = '#e0e0e0';
+            this.style.boxShadow = 'none';
+        });
+    });
+    
+    console.log('添加表单输入框修复完成');
+}
+
+// 重新绑定选项卡特定事件 - 增强版本
+function rebindTabEvents(tabId) {
+    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
+    
+    // 确保该选项卡的搜索功能正常工作
+    setTimeout(() => {
+        bindSearchEvents();
+        fixAllInputElements();
+        
+        // 如果是添加数据选项卡，额外修复表单
+        if (tabId === 'add') {
+            bindAddFormEvents();
+            fixAddFormInputs();
+        }
     }, 100);
 }
 
-// 移除重复的DOMContentLoaded监听器（如果存在）
-// 删除以下重复代码：
-// document.addEventListener('DOMContentLoaded', function() {
-//     initializePage();
-//     setupEventListeners(); // 只保留一次调用
-//     checkLoginStatus();
-// });
+// 显示管理员界面 - 彻底修复版本
+function showAdminInterface() {
+    console.log('显示管理员界面...');
+    
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('adminInterface').style.display = 'block';
+    document.getElementById('adminName').textContent = currentUser.username;
+    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
+    
+    // 关键修复：重新绑定所有事件，确保功能可用
+    setTimeout(() => {
+        console.log('重新绑定管理员界面事件...');
+        rebindSearchEvents();
+        fixAllInputElements();
+        bindAddFormEvents();
+        
+        // 特别修复添加数据选项卡的输入框
+        const addTab = document.getElementById('add');
+        if (addTab && addTab.classList.contains('active')) {
+            console.log('当前在添加数据选项卡，特别修复...');
+            fixAddFormInputs();
+        }
+        
+        console.log('管理员界面事件重新绑定完成');
+    }, 200);
+}
+
+// 重新绑定选项卡特定事件
+function rebindTabEvents(tabId) {
+    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
+    
+    // 确保该选项卡的搜索功能正常工作
+    setTimeout(() => {
+        bindSearchEvents();
+        fixAllInputElements();
+        
+        // 如果是添加数据选项卡，额外修复表单
+        if (tabId === 'add') {
+            console.log('特别修复添加数据选项卡...');
+            bindAddFormEvents();
+            fixAddFormInputs();
+        }
+    }, 100);
+}
 
 // 编辑用户
 function editUser(userId) {
@@ -872,3 +990,105 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('=== 页面初始化完成 ===');
 });
+
+// 在文件末尾添加缺失的添加用户和添加图书函数
+
+// 添加用户
+async function addUser(event) {
+    if (event) event.preventDefault();
+    
+    const userName = document.getElementById('userName').value;
+    const userNumber = document.getElementById('userNumber').value;
+    const userEmail = document.getElementById('userEmail').value;
+    
+    if (!userName || !userNumber || !userEmail) {
+        showMessage('请填写所有必填字段', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/Library/Administer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'addUser',
+                data: {
+                    name: userName,
+                    number: userNumber,
+                    email: userEmail
+                }
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                showMessage('用户添加成功！', 'success');
+                // 清空表单
+                document.getElementById('addUserForm').reset();
+                // 重新加载用户数据
+                await loadUsers();
+                updateStatistics();
+            } else {
+                showMessage('添加失败：' + result.message, 'error');
+            }
+        } else {
+            showMessage('添加失败：服务器错误', 'error');
+        }
+    } catch (error) {
+        showMessage('添加失败：网络错误', 'error');
+    }
+}
+
+// 添加图书
+async function addBook(event) {
+    if (event) event.preventDefault();
+    
+    const bookTitle = document.getElementById('bookTitle').value;
+    const bookAuthor = document.getElementById('bookAuthor').value;
+    const bookISBN = document.getElementById('bookISBN').value;
+    const bookStock = document.getElementById('bookStock').value;
+    
+    if (!bookTitle || !bookAuthor || !bookISBN || !bookStock) {
+        showMessage('请填写所有必填字段', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/Library/Administer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'addBook',
+                data: {
+                    title: bookTitle,
+                    author: bookAuthor,
+                    isbn: bookISBN,
+                    stock: parseInt(bookStock)
+                }
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                showMessage('图书添加成功！', 'success');
+                // 清空表单
+                document.getElementById('addBookForm').reset();
+                // 重新加载图书数据
+                await loadBooks();
+                updateStatistics();
+            } else {
+                showMessage('添加失败：' + result.message, 'error');
+            }
+        } else {
+            showMessage('添加失败：服务器错误', 'error');
+        }
+    } catch (error) {
+        showMessage('添加失败：网络错误', 'error');
+    }
+}

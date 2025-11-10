@@ -371,7 +371,7 @@ input, textarea, select {
 }
 
 /* 添加数据区域样式 */
-/* 添加数据表单样式修复 */
+/* 添加数据表单样式彻底修复 */
 .add-data-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -384,6 +384,8 @@ input, textarea, select {
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 5; /* 确保在正确层级 */
 }
 
 .add-user-form h3, .add-book-form h3 {
@@ -394,7 +396,7 @@ input, textarea, select {
     padding-bottom: 10px;
 }
 
-/* 表单组样式修复 */
+/* 表单组样式彻底修复 */
 .form-group {
     margin-bottom: 20px;
 }
@@ -407,9 +409,10 @@ input, textarea, select {
     font-size: 14px;
     transition: all 0.3s ease;
     background: white;
-    pointer-events: auto !important; /* 确保可点击 */
+    pointer-events: auto !important;
     user-select: auto !important;
     opacity: 1 !important;
+    cursor: text !important;
 }
 
 .form-group input:focus {
@@ -418,16 +421,16 @@ input, textarea, select {
     box-shadow: 0 0 0 3px rgba(42, 126, 63, 0.1);
 }
 
-.form-group input:not([disabled]) {
+.form-group input:hover {
+    border-color: #b0b0b0;
+}
+
+/* 确保所有输入框状态正确 */
+input:not([disabled]):not([readonly]) {
     pointer-events: auto;
     user-select: auto;
     opacity: 1;
-}
-
-/* 确保添加数据选项卡激活时的样式 */
-.tab-content#add.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
+    cursor: text;
 }
 
 /* 添加数据表单按钮样式 */
@@ -451,6 +454,12 @@ input, textarea, select {
 
 .add-data-section .action-btn:active {
     transform: translateY(0);
+}
+
+.add-data-section .action-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .form-group.focused {
