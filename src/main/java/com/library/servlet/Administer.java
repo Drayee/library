@@ -81,7 +81,7 @@ public class Administer extends HttpServlet {
         System.out.println(requestParams.get("title"));
         String title = (String) requestParams.get("data.title");
         String author = (String) requestParams.get("data.author");
-        int isbn = (int) requestParams.get("data.isbn");D
+        int isbn = (int) requestParams.get("data.isbn");
         int campus = (int) requestParams.get("data.campus");
         int floor = (int) requestParams.get("data.floor");
         int shelf = (int) requestParams.get("data.shelf");
