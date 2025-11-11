@@ -1,6 +1,7 @@
 package com.library.servlet;
 
 import com.library.init.User;
+import com.library.init.WebMethods;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -12,10 +13,7 @@ public class Login extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/plain;charset=UTF-8");
-        String name = "/Library";
-        response.setStatus(HttpServletResponse.SC_FOUND);
-        response.setHeader("Location", name);
+        WebMethods.redirect(request, response);
     }
 
     @Override

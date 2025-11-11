@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class BookShelfBase extends DataBaseLoad {
     private final String get_book_sql = "SELECT name FROM " + table_name + " WHERE idbook = ?";
-    private final String add_bool_sql = "INSERT INTO " + table_name + " (bookname,booknum,bookadddate,booklender,booktype,bookaddress,bookauthor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String add_bool_sql = "INSERT INTO " + table_name + " (bookname,booknumber,bookadddate,booklender,booktype,bookaddress,bookauthor) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String get_book_detail_sql = "SELECT * FROM " + table_name;
 
     public BookShelfBase() {
@@ -46,6 +46,7 @@ public class BookShelfBase extends DataBaseLoad {
                 add_pstmt.setString(7, detail.bookAuthor());
                 add_pstmt.executeUpdate();
             } catch (SQLException e) {
+
                 return false;
             }
         }

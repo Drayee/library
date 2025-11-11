@@ -15,6 +15,6 @@ public enum BookType {
         ENGLISH,
         SPORTS,
         MUSIC,
-
+        DIRTY_BOOK,
         OTHER
 }

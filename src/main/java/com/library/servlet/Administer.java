@@ -2,6 +2,7 @@ package com.library.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.database.BookShelfBase;
 import com.library.init.BookShelf;
+import com.library.init.WebMethods;
 import com.library.userClass.BookType;
 import com.library.userClass.Detail;
 import jakarta.servlet.*;
@@ -20,7 +21,7 @@ public class Administer extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        WebMethods.redirect(request, response);
     }
 
     @Override
@@ -78,13 +79,13 @@ public class Administer extends HttpServlet {
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
-        System.out.println(requestParams.get("title"));
-        String title = (String) requestParams.get("data.title");
-        String author = (String) requestParams.get("data.author");
-        int isbn = (int) requestParams.get("data.isbn");
-        int campus = (int) requestParams.get("data.campus");
-        int floor = (int) requestParams.get("data.floor");
-        int shelf = (int) requestParams.get("data.shelf");
+        Map<String, Object> data = (Map<String, Object>) requestParams.get("data");
+        String title = (String) data.get("title");
+        String author = (String) data.get("author");
+        int isbn = (int) (Long.parseLong((String)data.get("isbn")));
+        int campus = (int) (Long.parseLong((String)data.get("campus")));
+        int floor = (int) (Long.parseLong((String)data.get("floor")));
+        int shelf = (int) (Long.parseLong((String)data.get("shelf")));
         boolean isSuccess = BookShelf.getDataBase().addBook(new Detail(new int[]{isbn},title,
                 1,1, author,
                 new int[][]{new int[]{campus,floor,shelf}},
