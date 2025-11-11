@@ -1,4 +1,4 @@
-// 管理员系统JavaScript功能
+// 管理员系统JavaScript功能 - 优化版本
 
 // 全局变量
 let currentUser = null;
@@ -6,122 +6,267 @@ let usersData = [];
 let booksData = [];
 let borrowData = [];
 
-// 页面加载完成后初始化
+// 配置常量
+const CONFIG = {
+    API_BASE: '/Library/Administer',
+    MESSAGE_TIMEOUT: 3000,
+    SCROLL_THRESHOLD: 50,
+    EVENT_DELAY: 100
+};
+
+// 页面初始化 - 单一入口点
 document.addEventListener('DOMContentLoaded', function() {
-    initializePage();
-    setupEventListeners();
-    checkLoginStatus();
+    console.log('=== 管理员系统初始化开始 ===');
+    initializeApplication();
 });
 
-// 初始化选项卡功能
-function initTabs() {
+/**
+ * 应用程序初始化
+ */
+async function initializeApplication() {
+    try {
+        initializePage();
+        setupEventListeners();
+        await checkLoginStatus();
+        console.log('=== 管理员系统初始化完成 ===');
+    } catch (error) {
+        console.error('初始化失败:', error);
+        showMessage('系统初始化失败', 'error');
+    }
+}
+
+/**
+ * 初始化页面基本状态
+ */
+function initializePage() {
+    // 设置初始界面状态
+    document.getElementById('adminInterface').style.display = 'none';
+    document.getElementById('loginModal').style.display = 'block';
+
+    // 初始化选项卡
+    initTabs();
+}
+
+/**
+ * 设置所有事件监听器
+ */
+function setupEventListeners() {
+    // 登录相关事件
+    setupLoginEvents();
+
+    // 选项卡和导航事件
+    setupTabEvents();
+
+    // 模态框和表单事件
+    setupModalEvents();
+
+    // 页面交互事件
+    setupInteractionEvents();
+}
+
+/**
+ * 设置登录相关事件
+ */
+function setupLoginEvents() {
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+}
+
+/**
+ * 设置选项卡事件
+ */
+function setupTabEvents() {
     const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
 
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-
-            // 移除所有激活状态
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-
-            // 激活当前选项卡
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-
-            // 滚动到选项卡区域
-            document.querySelector('.tab-section').scrollIntoView({ behavior: 'smooth' });
-
-            // 加载对应数据 - 确保数据正确加载
-            setTimeout(() => {
-                loadTabData(tabId);
-                // 重新绑定该选项卡的事件
-                rebindTabEvents(tabId);
-            }, 50);
+            switchTab(tabId);
         });
     });
 }
 
-// 检查登录状态
-function checkLoginStatus() {
-    const savedUser = localStorage.getItem('adminUser');
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        showAdminInterface();
-        loadAllData();
-    }
+/**
+ * 设置模态框和表单事件
+ */
+function setupModalEvents() {
+    // 关闭按钮
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+
+    // 模态框外部点击关闭
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal();
+        }
+    });
+
+    // 表单提交事件
+    setupFormEvents();
 }
 
-// 处理页面滚动
-function handleScroll() {
-    const nav = document.querySelector('.top-nav');
-    if (window.scrollY > 50) {
-        nav.classList.add('scrolled');
-    } else {
-        nav.classList.remove('scrolled');
-    }
-}
+/**
+ * 设置表单事件
+ */
+function setupFormEvents() {
+    // 使用事件委托处理所有表单提交
+    document.addEventListener('submit', function(event) {
+        const formId = event.target.id;
 
-// 关闭模态框
-function closeModal() {
-document.querySelectorAll('.modal').forEach(modal => {
-        modal.style.display = 'none';
+        switch (formId) {
+            case 'loginForm':
+                event.preventDefault();
+                handleLogin(event);
+                break;
+            case 'addUserForm':
+                event.preventDefault();
+                addUser(event);
+                break;
+            case 'addBookForm':
+                event.preventDefault();
+                addBook(event);
+                break;
+            case 'editForm':
+                event.preventDefault();
+                handleEdit(event);
+                break;
+        }
     });
 }
 
-// 处理登录
-async function handleLogin(event) {
-event.preventDefault();
+/**
+ * 设置页面交互事件
+ */
+function setupInteractionEvents() {
+    // 页面滚动
+    window.addEventListener('scroll', handleScroll);
 
+    // 修复输入框状态
+    setTimeout(fixInputElements, CONFIG.EVENT_DELAY);
+}
+
+/**
+ * 切换选项卡
+ */
+function switchTab(tabId) {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // 移除所有激活状态
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+
+    // 激活当前选项卡
+    const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+    const activeContent = document.getElementById(tabId);
+
+    if (activeBtn && activeContent) {
+        activeBtn.classList.add('active');
+        activeContent.classList.add('active');
+
+        // 滚动到选项卡区域
+        document.querySelector('.tab-section')?.scrollIntoView({ behavior: 'smooth' });
+
+        // 加载对应数据
+        setTimeout(() => loadTabData(tabId), 50);
+    }
+}
+
+/**
+ * 检查登录状态
+ */
+async function checkLoginStatus() {
+    const savedUser = localStorage.getItem('adminUser');
+
+    if (savedUser) {
+        try {
+            currentUser = JSON.parse(savedUser);
+            await showAdminInterface();
+        } catch (error) {
+            console.error('解析用户数据失败:', error);
+            localStorage.removeItem('adminUser');
+        }
+    }
+}
+
+/**
+ * 处理登录
+ */
+async function handleLogin(event) {
     const username = document.getElementById('adminUsername').value;
     const password = document.getElementById('adminPassword').value;
 
-    // 使用POST方法发送登录请求到/Library/Administer
+    if (!username || !password) {
+        showMessage('请输入用户名和密码', 'error');
+        return;
+    }
+
     try {
-        const response = await fetch('/Library/Administer', {
+        const response = await fetch(CONFIG.API_BASE, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-action: 'login',
-                username: username,
-                password: password
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'login', username, password })
         });
 
-if (response.ok) {
+        if (response.ok) {
             const result = await response.json();
+
             if (result.success) {
-                currentUser = { username: username };
+                currentUser = { username };
                 localStorage.setItem('adminUser', JSON.stringify(currentUser));
-                showAdminInterface();
-                await loadAllData();
+                await showAdminInterface();
                 showMessage('登录成功！', 'success');
             } else {
-                showMessage('登录失败：' + result.message, 'error');
-                // 登录失败时重定向到/Library
-                setTimeout(() => {
-                    window.location.href = '/Library';
-                }, 2000);
+                handleLoginFailure(result.message);
             }
         } else {
-            showMessage('登录失败：服务器错误', 'error');
-            // 登录失败时重定向到/Library
-setTimeout(() => {
-                window.location.href = '/Library';
-            }, 2000);
+            handleLoginFailure('服务器错误');
         }
     } catch (error) {
-        showMessage('登录失败：网络错误', 'error');
-        // 登录失败时重定向到/Library
-        setTimeout(() => {
-            window.location.href = '/Library';
-        }, 2000);
+        handleLoginFailure('网络错误');
     }
 }
-// 处理退出登录
+
+/**
+ * 处理登录失败
+ */
+function handleLoginFailure(message) {
+    showMessage(`登录失败：${message}`, 'error');
+    setTimeout(() => {
+        window.location.href = '/Library';
+    }, 2000);
+}
+
+/**
+ * 显示管理员界面
+ */
+async function showAdminInterface() {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('adminInterface').style.display = 'block';
+
+    // 更新用户信息显示
+    document.getElementById('adminName').textContent = currentUser.username;
+    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
+
+    // 加载数据
+    await loadAllData();
+
+    // 修复界面元素状态
+    setTimeout(fixInputElements, CONFIG.EVENT_DELAY);
+}
+
+/**
+ * 处理退出登录
+ */
 function handleLogout() {
     currentUser = null;
     localStorage.removeItem('adminUser');
@@ -130,473 +275,236 @@ function handleLogout() {
     showMessage('已退出登录', 'success');
 }
 
-// 显示登录界面
+/**
+ * 显示登录界面
+ */
 function showLoginInterface() {
     document.getElementById('adminInterface').style.display = 'none';
     document.getElementById('loginModal').style.display = 'block';
     document.getElementById('loginForm').reset();
 }
 
-// 加载所有数据
+/**
+ * 加载所有数据
+ */
 async function loadAllData() {
-    await loadUsers();
-    await loadBooks();
-    await loadBorrowRecords();
-    updateStatistics();
+    try {
+        await Promise.all([
+            loadUsers(),
+            loadBooks(),
+            loadBorrowRecords()
+        ]);
+        updateStatistics();
+    } catch (error) {
+        console.error('加载数据失败:', error);
+        showMessage('加载数据失败', 'error');
+    }
 }
 
-// 加载用户数据
+/**
+ * 加载用户数据
+ */
 async function loadUsers() {
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'getUsers'
-            })
-        });
-
-if (response.ok) {
-            const result = await response.json();
-            usersData = result.data || [];
+        const response = await apiRequest('getUsers');
+        if (response) {
+            usersData = response.data || [];
             displayUsers(usersData);
         }
     } catch (error) {
         console.error('加载用户数据失败:', error);
-        showMessage('加载用户数据失败', 'error');
+        throw error;
     }
 }
 
-// 加载图书数据
+/**
+ * 加载图书数据
+ */
 async function loadBooks() {
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'getBooks'
-            })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            booksData = result.data || [];
+        const response = await apiRequest('getBooks');
+        if (response) {
+            booksData = response.data || [];
             displayBooks(booksData);
         }
     } catch (error) {
         console.error('加载图书数据失败:', error);
-        showMessage('加载图书数据失败', 'error');
+        throw error;
     }
 }
 
-// 加载借阅记录
+/**
+ * 加载借阅记录
+ */
 async function loadBorrowRecords() {
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'getBorrowRecords'
-            })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            borrowData = result.data || [];
+        const response = await apiRequest('getBorrowRecords');
+        if (response) {
+            borrowData = response.data || [];
             displayBorrowRecords(borrowData);
         }
     } catch (error) {
         console.error('加载借阅记录失败:', error);
-        showMessage('加载借阅记录失败', 'error');
+        throw error;
     }
 }
 
-// 显示用户数据
+/**
+ * 通用API请求函数
+ */
+async function apiRequest(action, data = null) {
+    try {
+        const requestBody = { action };
+        if (data) requestBody.data = data;
+
+        const response = await fetch(CONFIG.API_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error('服务器响应错误');
+        }
+    } catch (error) {
+        console.error(`API请求失败 (${action}):`, error);
+        throw error;
+    }
+}
+
+/**
+ * 显示用户数据
+ */
 function displayUsers(users) {
     const tbody = document.getElementById('userTableBody');
-    tbody.innerHTML = '';
+    if (!tbody) return;
 
-    users.forEach(user => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+    tbody.innerHTML = users.map(user => `
+        <tr>
             <td>${user.id || 'N/A'}</td>
             <td>${user.name || 'N/A'}</td>
             <td>${user.number || 'N/A'}</td>
             <td>${user.email || 'N/A'}</td>
-            <td class="status-${user.status === 'active' ? 'active' : 'inactive'}">${user.status === 'active' ? '活跃' : '禁用'}</td>
+            <td class="status-${user.status === 'active' ? 'active' : 'inactive'}">
+                ${user.status === 'active' ? '活跃' : '禁用'}
+            </td>
             <td>
                 <button class="action-btn edit" onclick="editUser(${user.id})">编辑</button>
                 <button class="action-btn delete" onclick="deleteUser(${user.id})">删除</button>
             </td>
-        `;
-        tbody.appendChild(row);
-    });
+        </tr>
+    `).join('');
 }
 
-// 显示图书数据
+/**
+ * 显示图书数据
+ */
 function displayBooks(books) {
     const tbody = document.getElementById('bookTableBody');
-    tbody.innerHTML = '';
+    if (!tbody) return;
 
-    books.forEach(book => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+    tbody.innerHTML = books.map(book => `
+        <tr>
             <td>${book.id || 'N/A'}</td>
             <td>${book.title || 'N/A'}</td>
             <td>${book.author || 'N/A'}</td>
             <td>${book.isbn || 'N/A'}</td>
             <td>${book.stock || 0}</td>
-            <td class="status-${book.status === 'available' ? 'available' : 'borrowed'}">${book.status === 'available' ? '可借' : '已借出'}</td>
+            <td class="status-${book.status === 'available' ? 'available' : 'borrowed'}">
+                ${book.status === 'available' ? '可借' : '已借出'}
+            </td>
             <td>
                 <button class="action-btn edit" onclick="editBook(${book.id})">编辑</button>
                 <button class="action-btn delete" onclick="deleteBook(${book.id})">删除</button>
             </td>
-        `;
-tbody.appendChild(row);
-    });
+        </tr>
+    `).join('');
 }
 
-// 显示借阅记录
+/**
+ * 显示借阅记录
+ */
 function displayBorrowRecords(records) {
     const tbody = document.getElementById('borrowTableBody');
-    tbody.innerHTML = '';
+    if (!tbody) return;
 
-    records.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+    tbody.innerHTML = records.map(record => `
+        <tr>
             <td>${record.id || 'N/A'}</td>
             <td>${record.userId || 'N/A'}</td>
             <td>${record.bookId || 'N/A'}</td>
             <td>${record.borrowDate || 'N/A'}</td>
             <td>${record.dueDate || 'N/A'}</td>
-            <td class="status-${record.status === 'returned' ? 'active' : 'borrowed'}">${record.status === 'returned' ? '已归还' : '借阅中'}</td>
+            <td class="status-${record.status === 'returned' ? 'active' : 'borrowed'}">
+                ${record.status === 'returned' ? '已归还' : '借阅中'}
+            </td>
             <td>
                 <button class="action-btn" onclick="returnBook(${record.id})">归还</button>
             </td>
-        `;
-        tbody.appendChild(row);
-    });
+        </tr>
+    `).join('');
 }
 
-// 更新统计信息
+/**
+ * 更新统计信息
+ */
 function updateStatistics() {
-    document.getElementById('totalUsers').textContent = usersData.length;
-    document.getElementById('totalBooks').textContent = booksData.length;
-    document.getElementById('borrowedBooks').textContent = borrowData.filter(r => r.status !== 'returned').length;
-}
+    const totalUsersElem = document.getElementById('totalUsers');
+    const totalBooksElem = document.getElementById('totalBooks');
+    const borrowedBooksElem = document.getElementById('borrowedBooks');
 
-// 搜索用户
-// 搜索图书
-// 搜索借阅记录
-// 页面加载完成后初始化 - 修复重复初始化问题
-document.addEventListener('DOMContentLoaded', function() {
-    // 单一初始化入口
-    initApplication();
-});
-
-// 单一初始化函数
-async function initApplication() {
-    await initializePage();
-    await setupEventListeners();
-    await checkLoginStatus();
-}
-
-// 初始化页面
-function initializePage() {
-    // 默认显示登录界面，隐藏管理员界面
-    document.getElementById('adminInterface').style.display = 'none';
-    document.getElementById('loginModal').style.display = 'block';
-
-    // 初始化选项卡功能
-    initTabs();
-    
-    console.log('页面初始化完成');
-}
-
-// 重新绑定搜索相关事件 - 增强版本
-function rebindSearchEvents() {
-    // 移除之前的事件监听器
-    const searchUserBtn = document.getElementById('searchUserBtn');
-    const searchBookBtn = document.getElementById('searchBookBtn');
-    const searchBorrowBtn = document.getElementById('searchBorrowBtn');
-    
-    if (searchUserBtn) {
-        searchUserBtn.replaceWith(searchUserBtn.cloneNode(true));
+    if (totalUsersElem) totalUsersElem.textContent = usersData.length;
+    if (totalBooksElem) totalBooksElem.textContent = booksData.length;
+    if (borrowedBooksElem) {
+        borrowedBooksElem.textContent = borrowData.filter(r => r.status !== 'returned').length;
     }
-    if (searchBookBtn) {
-        searchBookBtn.replaceWith(searchBookBtn.cloneNode(true));
+}
+
+/**
+ * 处理页面滚动
+ */
+function handleScroll() {
+    const nav = document.querySelector('.top-nav');
+    if (!nav) return;
+
+    if (window.scrollY > CONFIG.SCROLL_THRESHOLD) {
+        nav.classList.add('scrolled');
+    } else {
+        nav.classList.remove('scrolled');
     }
-    if (searchBorrowBtn) {
-        searchBorrowBtn.replaceWith(searchBorrowBtn.cloneNode(true));
-    }
-    
-    // 重新绑定事件
-    bindSearchEvents();
-    // 新增：绑定添加数据表单事件
-    bindAddFormEvents();
 }
 
-// 新增：专门绑定添加数据表单事件
-function bindAddFormEvents() {
-    // 使用事件委托绑定添加表单
-    document.addEventListener('submit', function(event) {
-        if (event.target.id === 'addUserForm') {
-            event.preventDefault();
-            addUser();
-        }
-        if (event.target.id === 'addBookForm') {
-            event.preventDefault();
-            addBook();
-        }
+/**
+ * 关闭模态框
+ */
+function closeModal() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
     });
-    
-    // 修复添加数据表单的输入框可点击性
-    fixAddFormInputs();
 }
 
-// 新增：专门修复添加数据表单的输入框
-function fixAddFormInputs() {
-    const addFormInputs = document.querySelectorAll('#addUserForm input, #addBookForm input, #addUserForm button, #addBookForm button');
-    addFormInputs.forEach(input => {
-        input.style.pointerEvents = 'auto';
-        input.style.userSelect = 'auto';
-        input.style.opacity = '1';
-        input.disabled = false;
-        
-        // 确保输入框有正确的焦点样式
-        input.addEventListener('focus', function() {
-            this.style.borderColor = '#2a7e3f';
-            this.style.boxShadow = '0 0 0 3px rgba(42, 126, 63, 0.1)';
-        });
-        
-        input.addEventListener('blur', function() {
-            this.style.borderColor = '#e0e0e0';
-            this.style.boxShadow = 'none';
-        });
-    });
-    
-    console.log('添加数据表单输入框修复完成');
-}
+/**
+ * 修复输入框元素状态
+ */
+function fixInputElements() {
+    const inputs = document.querySelectorAll('input, textarea, select, button');
 
-// 修改setupEventListeners函数，确保正确绑定添加表单事件
-function setupEventListeners() {
-    // 延迟执行以确保DOM元素已加载
-    setTimeout(() => {
-        console.log('开始设置事件监听器...');
-        
-        // 登录表单
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', handleLogin);
-            console.log('登录表单事件绑定完成');
-        }
-
-        // 退出登录
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-            console.log('退出登录事件绑定完成');
-        }
-
-        // 使用事件委托绑定搜索功能
-        bindSearchEvents();
-        
-        // 绑定添加数据表单事件
-        bindAddFormEvents();
-
-        // 添加数据表单（直接绑定作为主要方式）
-        const addUserForm = document.getElementById('addUserForm');
-        if (addUserForm) {
-            // 移除旧的事件监听器（如果有）
-            addUserForm.replaceWith(addUserForm.cloneNode(true));
-            // 重新绑定
-            document.getElementById('addUserForm').addEventListener('submit', addUser);
-            console.log('添加用户表单事件绑定完成');
-        }
-
-        const addBookForm = document.getElementById('addBookForm');
-        if (addBookForm) {
-            // 移除旧的事件监听器（如果有）
-            addBookForm.replaceWith(addBookForm.cloneNode(true));
-            // 重新绑定
-            document.getElementById('addBookForm').addEventListener('submit', addBook);
-            console.log('添加图书表单事件绑定完成');
-        }
-
-        // 编辑表单提交
-        const editForm = document.getElementById('editForm');
-        if (editForm) {
-            editForm.addEventListener('submit', handleEdit);
-            console.log('编辑表单事件绑定完成');
-        }
-
-        // 页面滚动监听
-        window.addEventListener('scroll', handleScroll);
-        console.log('页面滚动事件绑定完成');
-
-        // 关闭模态框
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', closeModal);
-        });
-        console.log('关闭按钮事件绑定完成');
-
-        // 点击模态框外部关闭
-        window.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                closeModal();
-            }
-        });
-
-        console.log('所有事件监听器设置完成');
-    }, 100);
-}
-// 增强的绑定添加表单事件函数
-function bindAddFormEvents() {
-    console.log('开始绑定添加表单事件...');
-    
-    // 使用事件委托绑定添加表单
-    document.addEventListener('submit', function(event) {
-        console.log('表单提交事件触发:', event.target.id);
-        
-        if (event.target.id === 'addUserForm') {
-            event.preventDefault();
-            console.log('处理添加用户表单提交');
-            addUser(event);
-        }
-        if (event.target.id === 'addBookForm') {
-            event.preventDefault();
-            console.log('处理添加图书表单提交');
-            addBook(event);
-        }
-    });
-    
-    // 修复添加数据表单的输入框可点击性
-    fixAddFormInputs();
-    console.log('添加表单事件绑定完成');
-}
-
-// 专门修复添加数据表单的输入框
-function fixAddFormInputs() {
-    console.log('开始修复添加表单输入框...');
-    
-    const addFormInputs = document.querySelectorAll('#addUserForm input, #addBookForm input, #addUserForm button, #addBookForm button');
-    console.log(`找到 ${addFormInputs.length} 个添加表单元素`);
-    
-    addFormInputs.forEach((input, index) => {
-        console.log(`修复添加表单元素 ${index + 1}:`, {
-            id: input.id,
-            tagName: input.tagName,
-            type: input.type
-        });
-        
-        // 确保元素可点击
-        input.style.pointerEvents = 'auto';
-        input.style.userSelect = 'auto';
-        input.style.opacity = '1';
+    inputs.forEach(input => {
+        // 确保元素可交互
         input.disabled = false;
         input.readOnly = false;
-        
-        // 添加调试事件监听器
-        input.addEventListener('click', function() {
-            console.log('添加表单元素被点击:', this.id || this.name || '未命名元素');
-        });
-        
-        input.addEventListener('focus', function() {
-            console.log('添加表单元素获得焦点:', this.id || this.name || '未命名元素');
-            this.style.borderColor = '#2a7e3f';
-            this.style.boxShadow = '0 0 0 3px rgba(42, 126, 63, 0.1)';
-        });
-        
-        input.addEventListener('blur', function() {
-            console.log('添加表单元素失去焦点:', this.id || this.name || '未命名元素');
-            this.style.borderColor = '#e0e0e0';
-            this.style.boxShadow = 'none';
-        });
+        input.style.pointerEvents = 'auto';
+        input.style.userSelect = 'auto';
+        input.style.opacity = '1';
+        input.style.cursor = 'default';
     });
-    
-    console.log('添加表单输入框修复完成');
 }
 
-// 重新绑定选项卡特定事件 - 增强版本
-// 显示管理员界面 - 彻底修复版本
-function showAdminInterface() {
-    console.log('显示管理员界面...');
-    
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('adminInterface').style.display = 'block';
-    document.getElementById('adminName').textContent = currentUser.username;
-    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
-    
-    // 关键修复：重新绑定所有事件，确保功能可用
-    setTimeout(() => {
-        console.log('重新绑定管理员界面事件...');
-        rebindSearchEvents();
-        fixAllInputElements();
-        bindAddFormEvents();
-        
-        // 特别修复添加数据选项卡的输入框
-        const addTab = document.getElementById('add');
-        if (addTab && addTab.classList.contains('active')) {
-            console.log('当前在添加数据选项卡，特别修复...');
-            fixAddFormInputs();
-        }
-        
-        console.log('管理员界面事件重新绑定完成');
-    }, 200);
-}
-
-// 重新绑定选项卡特定事件
-function rebindTabEvents(tabId) {
-    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
-    
-    // 确保该选项卡的搜索功能正常工作
-    setTimeout(() => {
-        bindSearchEvents();
-        fixAllInputElements();
-        
-        // 如果是添加数据选项卡，额外修复表单
-        if (tabId === 'add') {
-            console.log('特别修复添加数据选项卡...');
-            bindAddFormEvents();
-            fixAddFormInputs();
-        }
-    }, 100);
-}
-
-// 编辑用户
-function editUser(userId) {
-    const user = usersData.find(u => u.id === userId);
-    if (user) {
-        showEditModal('user', user);
-    }
-}
-
-// 编辑图书
-function editBook(bookId) {
-    const book = booksData.find(b => b.id === bookId);
-    if (book) {
-        showEditModal('book', book);
-    }
-}
-
-// 清空所有数据
-function clearAllData() {
-    usersData = [];
-    booksData = [];
-    borrowData = [];
-    document.getElementById('userTableBody').innerHTML = '';
-    document.getElementById('bookTableBody').innerHTML = '';
-    document.getElementById('borrowTableBody').innerHTML = '';
-    updateStatistics();
-}
-
-// 加载选项卡数据
+/**
+ * 加载选项卡数据
+ */
 function loadTabData(tabId) {
     switch (tabId) {
         case 'users':
@@ -611,14 +519,34 @@ function loadTabData(tabId) {
     }
 }
 
-// 显示编辑模态框
-function showEditModal(data, type) {
+/**
+ * 编辑用户
+ */
+function editUser(userId) {
+    const user = usersData.find(u => u.id === userId);
+    if (user) showEditModal('user', user);
+}
+
+/**
+ * 编辑图书
+ */
+function editBook(bookId) {
+    const book = booksData.find(b => b.id === bookId);
+    if (book) showEditModal('book', book);
+}
+
+/**
+ * 显示编辑模态框
+ */
+function showEditModal(type, data) {
     const modal = document.getElementById('editModal');
     const modalTitle = document.getElementById('modalTitle');
     const formContent = document.getElementById('modalFormContent');
-    
+
+    if (!modal || !modalTitle || !formContent) return;
+
     modalTitle.textContent = type === 'user' ? '编辑用户信息' : '编辑图书信息';
-    
+
     if (type === 'user') {
         formContent.innerHTML = `
             <input type="hidden" name="id" value="${data.id}">
@@ -639,8 +567,8 @@ function showEditModal(data, type) {
             </div>
         `;
     } else {
-formContent.innerHTML = `
-<input type="hidden" name="id" value="${data.id}">
+        formContent.innerHTML = `
+            <input type="hidden" name="id" value="${data.id}">
             <div class="form-group">
                 <input type="text" name="title" value="${data.title || ''}" placeholder="书名" required>
             </div>
@@ -652,76 +580,49 @@ formContent.innerHTML = `
             </div>
         `;
     }
-    
+
     modal.style.display = 'block';
 }
 
-// 处理编辑提交
+/**
+ * 处理编辑提交
+ */
 async function handleEdit(event) {
-    event.preventDefault();
-    
     const formData = new FormData(event.target);
-    const data = {};
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
-    }
-    
+    const data = Object.fromEntries(formData.entries());
     const type = data.name ? 'user' : 'book';
-    
+
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: type === 'user' ? 'updateUser' : 'updateBook',
-                data: data
-            })
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                showMessage('更新成功！', 'success');
-                closeModal();
-                await loadAllData();
-            } else {
-                showMessage('更新失败：' + result.message, 'error');
-            }
+        const response = await apiRequest(
+            type === 'user' ? 'updateUser' : 'updateBook',
+            data
+        );
+
+        if (response?.success) {
+            showMessage('更新成功！', 'success');
+            closeModal();
+            await loadAllData();
         } else {
-            showMessage('更新失败：服务器错误', 'error');
+            showMessage('更新失败', 'error');
         }
     } catch (error) {
         showMessage('更新失败：网络错误', 'error');
     }
 }
 
-// 删除用户
+/**
+ * 删除用户
+ */
 async function deleteUser(userId) {
     if (confirm('确定要删除该用户吗？')) {
         try {
-            const response = await fetch('/Library/Administer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'deleteUser',
-                    userId: userId
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    showMessage('用户删除成功！', 'success');
-                    await loadAllData();
-                } else {
-                    showMessage('删除失败：' + result.message, 'error');
-                }
+            const response = await apiRequest('deleteUser', { userId });
+
+            if (response?.success) {
+                showMessage('用户删除成功！', 'success');
+                await loadAllData();
             } else {
-                showMessage('删除失败：服务器错误', 'error');
+                showMessage('删除失败', 'error');
             }
         } catch (error) {
             showMessage('删除失败：网络错误', 'error');
@@ -729,31 +630,19 @@ async function deleteUser(userId) {
     }
 }
 
-// 删除图书
+/**
+ * 删除图书
+ */
 async function deleteBook(bookId) {
     if (confirm('确定要删除该图书吗？')) {
         try {
-            const response = await fetch('/Library/Administer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'deleteBook',
-                    bookId: bookId
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    showMessage('图书删除成功！', 'success');
-                    await loadAllData();
-                } else {
-                    showMessage('删除失败：' + result.message, 'error');
-                }
+            const response = await apiRequest('deleteBook', { bookId });
+
+            if (response?.success) {
+                showMessage('图书删除成功！', 'success');
+                await loadAllData();
             } else {
-                showMessage('删除失败：服务器错误', 'error');
+                showMessage('删除失败', 'error');
             }
         } catch (error) {
             showMessage('删除失败：网络错误', 'error');
@@ -761,215 +650,132 @@ async function deleteBook(bookId) {
     }
 }
 
-// 归还图书
+/**
+ * 归还图书
+ */
 async function returnBook(recordId) {
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'returnBook',
-                recordId: recordId
-            })
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                showMessage('图书归还成功！', 'success');
-                await loadAllData();
-            } else {
-                showMessage('归还失败：' + result.message, 'error');
-            }
+        const response = await apiRequest('returnBook', { recordId });
+
+        if (response?.success) {
+            showMessage('图书归还成功！', 'success');
+            await loadAllData();
         } else {
-            showMessage('归还失败：服务器错误', 'error');
+            showMessage('归还失败', 'error');
         }
     } catch (error) {
         showMessage('归还失败：网络错误', 'error');
     }
 }
 
-// 显示消息
-function showMessage(message, type) {
-    const messageDiv = document.getElementById('globalMessage');
-    messageDiv.textContent = message;
-    messageDiv.className = `message ${type}`;
-    messageDiv.style.display = 'block';
-    
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-    }, 3000);
-}
-
-// 检查和修复所有输入框状态
-function fixAllInputElements() {
-    console.log('开始检查和修复输入框状态...');
-    
-    const allInputs = document.querySelectorAll('input, textarea, select');
-    console.log(`找到 ${allInputs.length} 个输入元素`);
-    
-    allInputs.forEach((input, index) => {
-        console.log(`检查输入框 ${index + 1}:`, {
-            id: input.id,
-            type: input.type,
-            disabled: input.disabled,
-            readonly: input.readOnly,
-            style: {
-                pointerEvents: input.style.pointerEvents,
-                userSelect: input.style.userSelect,
-                opacity: input.style.opacity,
-                cursor: input.style.cursor
-            }
-        });
-        
-        // 移除禁用和只读属性
-        input.disabled = false;
-        input.readOnly = false;
-        
-        // 确保正确的CSS样式
-        input.style.pointerEvents = 'auto';
-        input.style.userSelect = 'auto';
-        input.style.opacity = '1';
-        input.style.cursor = 'text';
-        input.style.backgroundColor = 'white';
-        
-        // 添加焦点事件监听器用于调试
-        input.addEventListener('focus', function() {
-            console.log('输入框获得焦点:', this.id || this.name || '未命名输入框');
-        });
-        
-        input.addEventListener('input', function() {
-            console.log('输入框内容变化:', this.id || this.name || '未命名输入框', '值:', this.value);
-        });
-    });
-    
-    console.log('输入框状态检查和修复完成');
-}
-
-// 修改页面初始化
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== 页面初始化开始 ===');
-    initializePage();
-    setupEventListeners();
-    checkLoginStatus();
-    
-    // 延迟修复输入框状态
-    setTimeout(() => {
-        fixAllInputElements();
-    }, 500);
-    
-    console.log('=== 页面初始化完成 ===');
-});
-
-// 在文件末尾添加缺失的添加用户和添加图书函数
-
-// 添加用户
+/**
+ * 添加用户
+ */
 async function addUser(event) {
-    if (event) event.preventDefault();
-    
-    const userName = document.getElementById('userName').value;
-    const userNumber = document.getElementById('userNumber').value;
-    const userEmail = document.getElementById('userEmail').value;
-    
-    if (!userName || !userNumber || !userEmail) {
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // 验证必填字段
+    if (!data.userName || !data.userNumber || !data.userEmail) {
         showMessage('请填写所有必填字段', 'error');
         return;
     }
-    
+
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'addUser',
-                data: {
-                    name: userName,
-                    number: userNumber,
-                    email: userEmail
-                }
-            })
+        const response = await apiRequest('addUser', {
+            name: data.userName,
+            number: data.userNumber,
+            email: data.userEmail
         });
-        
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                showMessage('用户添加成功！', 'success');
-                // 清空表单
-                document.getElementById('addUserForm').reset();
-                // 重新加载用户数据
-                await loadUsers();
-                updateStatistics();
-            } else {
-                showMessage('添加失败：' + result.message, 'error');
-            }
+
+        if (response?.success) {
+            showMessage('用户添加成功！', 'success');
+            form.reset();
+            await loadUsers();
+            updateStatistics();
         } else {
-            showMessage('添加失败：服务器错误', 'error');
+            showMessage('添加失败', 'error');
         }
     } catch (error) {
         showMessage('添加失败：网络错误', 'error');
     }
 }
 
-// 添加图书
+/**
+ * 添加图书
+ */
 async function addBook(event) {
-    if (event) event.preventDefault();
-    
-    const bookTitle = document.getElementById('bookTitle').value;
-    const bookAuthor = document.getElementById('bookAuthor').value;
-    const bookISBN = document.getElementById('bookISBN').value;
-    const bookCampus = document.getElementById('bookCampus').value;
-    const bookFloor = document.getElementById('bookFloor').value;
-    const bookShelf = document.getElementById('bookShelf').value;
-    
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
     // 获取选中的图书类别
     const bookTypeCheckboxes = document.querySelectorAll('input[name="bookType"]:checked');
-    const bookTypes = Array.from(bookTypeCheckboxes).map(checkbox => parseInt(checkbox.value));
-    
-    if (!bookTitle || !bookAuthor || !bookISBN || !bookCampus || !bookFloor || !bookShelf || bookTypes.length === 0) {
+    const bookTypes = Array.from(bookTypeCheckboxes).map(cb => parseInt(cb.value));
+
+    // 验证必填字段
+    const requiredFields = ['bookTitle', 'bookAuthor', 'bookISBN', 'bookCampus', 'bookFloor', 'bookShelf'];
+    const missingFields = requiredFields.filter(field => !data[field]);
+
+    if (missingFields.length > 0 || bookTypes.length === 0) {
         showMessage('请填写所有必填字段并选择至少一个图书类别', 'error');
         return;
     }
-    
+
     try {
-        const response = await fetch('/Library/Administer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'addBook',
-                data: {
-                    title: bookTitle,
-                    author: bookAuthor,
-                    isbn: bookISBN,
-                    campus: bookCampus,
-                    floor: bookFloor,
-                    shelf: bookShelf,
-                    types: bookTypes
-                }
-            })
+        const response = await apiRequest('addBook', {
+            title: data.bookTitle,
+            author: data.bookAuthor,
+            isbn: data.bookISBN,
+            campus: data.bookCampus,
+            floor: data.bookFloor,
+            shelf: data.bookShelf,
+            types: bookTypes
         });
-        
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                showMessage('图书添加成功！', 'success');
-                // 清空表单
-                document.getElementById('addBookForm').reset();
-                // 重新加载图书数据
-                await loadBooks();
-                updateStatistics();
-            } else {
-                showMessage('添加失败：' + result.message, 'error');
-            }
+
+        if (response?.success) {
+            showMessage('图书添加成功！', 'success');
+            form.reset();
+            await loadBooks();
+            updateStatistics();
         } else {
-            showMessage('添加失败：服务器错误', 'error');
+            showMessage('添加失败', 'error');
         }
     } catch (error) {
         showMessage('添加失败：网络错误', 'error');
     }
+}
+
+/**
+ * 显示消息
+ */
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('globalMessage');
+    if (!messageDiv) return;
+
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = 'block';
+
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, CONFIG.MESSAGE_TIMEOUT);
+}
+
+/**
+ * 清空所有数据
+ */
+function clearAllData() {
+    usersData = [];
+    booksData = [];
+    borrowData = [];
+
+    const tables = ['userTableBody', 'bookTableBody', 'borrowTableBody'];
+    tables.forEach(tableId => {
+        const tbody = document.getElementById(tableId);
+        if (tbody) tbody.innerHTML = '';
+    });
+
+    updateStatistics();
 }
