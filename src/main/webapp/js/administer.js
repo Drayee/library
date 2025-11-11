@@ -44,7 +44,7 @@ function initializePage() {
     document.getElementById('loginModal').style.display = 'block';
 
     // 初始化选项卡
-    initTabs();
+    setupTabEvents();
 }
 
 /**

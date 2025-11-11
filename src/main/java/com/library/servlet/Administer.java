@@ -20,6 +20,7 @@ public class Administer extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 
     @Override
@@ -33,7 +34,7 @@ public class Administer extends HttpServlet {
             requestBody.append(line);
         }
 
-        System.out.println(requestBody.toString());
+        System.out.println(requestBody);
 
         Map<String ,Object> requestParams = objectMapper.readValue(requestBody.toString(), Map.class);
         String action = (String) requestParams.get("action");
@@ -77,9 +78,10 @@ public class Administer extends HttpServlet {
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
+        System.out.println(requestParams.get("title"));
         String title = (String) requestParams.get("data.title");
         String author = (String) requestParams.get("data.author");
-        int isbn = (int) requestParams.get("data.isbn");
+        int isbn = (int) requestParams.get("data.isbn");D
         int campus = (int) requestParams.get("data.campus");
         int floor = (int) requestParams.get("data.floor");
         int shelf = (int) requestParams.get("data.shelf");
