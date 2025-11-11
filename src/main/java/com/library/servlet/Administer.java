@@ -86,10 +86,12 @@ public class Administer extends HttpServlet {
         int campus = (int) (Long.parseLong((String)data.get("campus")));
         int floor = (int) (Long.parseLong((String)data.get("floor")));
         int shelf = (int) (Long.parseLong((String)data.get("shelf")));
+        String[] bookTypes = (String[]) data.get("bookTypes");
+        BookType[] bookTypesTrans = WebMethods.bookTypesTransform(bookTypes);
         boolean isSuccess = BookShelf.getDataBase().addBook(new Detail(new int[]{isbn},title,
                 1,1, author,
                 new int[][]{new int[]{campus,floor,shelf}},
-                new BookType[]{BookType.OTHER}, new Date()));
+                bookTypesTrans, new Date()));
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         if (isSuccess) {

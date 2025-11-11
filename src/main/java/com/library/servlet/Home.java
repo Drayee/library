@@ -3,6 +3,7 @@ package com.library.servlet;
 import com.library.init.BookShelf;
 import com.library.init.Library;
 import com.library.init.User;
+import com.library.init.WebMethods;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -13,7 +14,7 @@ import java.io.IOException;
 public class Home extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        WebMethods.redirect(request, response);
     }
 
     @Override

@@ -1,0 +1,18 @@
+{
+  "FICTION": "科幻",
+  "NON_FICTION": "非-fiction",
+  "SCIENCE": "科学",
+  "HISTORY": "历史",
+  "FOREIGN_LANGUAGE": "外语",
+  "MATH": "数学",
+  "BIOLOGY": "生物",
+  "GEARTH_SCIENCE": "地球科学",
+  "COMPUTER_SCIENCE": "计算机科学",
+  "PHYSICS": "物理",
+  "CHEMISTRY": "化学",
+  "ENGLISH": "英语",
+  "SPORTS": "运动",
+  "MUSIC": "音乐",
+  "DIRTY_BOOK": "成人书籍",
+  "OTHER": "其他"
+}
