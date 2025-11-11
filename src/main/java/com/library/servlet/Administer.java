@@ -11,9 +11,7 @@ import jakarta.servlet.annotation.*;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "Administer", value = "/Administer")
 public class Administer extends HttpServlet {
@@ -45,6 +43,7 @@ public class Administer extends HttpServlet {
                 login(response, requestParams);
                 break;
             case "getBooks":
+                getBook(response);
                 break;
             case "addBook":
                 addBook(response, requestParams);
@@ -74,8 +73,6 @@ public class Administer extends HttpServlet {
     private void getBook(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-
-
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
@@ -86,7 +83,7 @@ public class Administer extends HttpServlet {
         int campus = (int) (Long.parseLong((String)data.get("campus")));
         int floor = (int) (Long.parseLong((String)data.get("floor")));
         int shelf = (int) (Long.parseLong((String)data.get("shelf")));
-        String[] bookTypes = (String[]) data.get("bookTypes");
+        String[] bookTypes = ((ArrayList<String>) data.get("bookTypes")).toArray(new String[0]);
         BookType[] bookTypesTrans = WebMethods.bookTypesTransform(bookTypes);
         boolean isSuccess = BookShelf.getDataBase().addBook(new Detail(new int[]{isbn},title,
                 1,1, author,

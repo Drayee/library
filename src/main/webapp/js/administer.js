@@ -112,6 +112,126 @@ function setupModalEvents() {
 
     // 表单提交事件
     setupFormEvents();
+    
+    // 图书类别选择事件
+    setupCategoryEvents();
+}
+
+/**
+ * 设置图书类别选择事件
+ */
+function setupCategoryEvents() {
+    const selectCategoryBtn = document.getElementById('selectCategoryBtn');
+    const confirmCategoryBtn = document.getElementById('confirmCategoryBtn');
+    const cancelCategoryBtn = document.getElementById('cancelCategoryBtn');
+    const categoryModal = document.getElementById('categoryModal');
+
+    if (selectCategoryBtn) {
+        selectCategoryBtn.addEventListener('click', showCategoryModal);
+    }
+
+    if (confirmCategoryBtn) {
+        confirmCategoryBtn.addEventListener('click', confirmCategorySelection);
+    }
+
+    if (cancelCategoryBtn) {
+        cancelCategoryBtn.addEventListener('click', closeCategoryModal);
+    }
+    
+    // 加载类别数据
+    loadCategoryData();
+}
+
+/**
+ * 加载图书类别数据
+ */
+function loadCategoryData() {
+    const categoryCheckboxes = document.getElementById('categoryCheckboxes');
+    if (!categoryCheckboxes) return;
+
+    // 从type_transform.json获取类别数据（这里使用硬编码，实际应该从服务器获取）
+    const categories = {
+        "FICTION": "科幻",
+        "NON_FICTION": "非-fiction",
+        "SCIENCE": "科学",
+        "HISTORY": "历史",
+        "FOREIGN_LANGUAGE": "外语",
+        "MATH": "数学",
+        "BIOLOGY": "生物",
+        "GEARTH_SCIENCE": "地球科学",
+        "COMPUTER_SCIENCE": "计算机科学",
+        "PHYSICS": "物理",
+        "CHEMISTRY": "化学",
+        "ENGLISH": "英语",
+        "SPORTS": "运动",
+        "MUSIC": "音乐",
+        "DIRTY_BOOK": "成人书籍",
+        "OTHER": "其他"
+    };
+
+    categoryCheckboxes.innerHTML = Object.entries(categories).map(([key, value]) => `
+        <label class="checkbox-label-modal">
+            <input type="checkbox" name="bookType" value="${key}" data-chinese="${value}">
+            ${value}
+        </label>
+    `).join('');
+}
+
+/**
+ * 显示图书类别选择模态框
+ */
+function showCategoryModal() {
+    const categoryModal = document.getElementById('categoryModal');
+    if (categoryModal) {
+        categoryModal.style.display = 'block';
+        
+        // 恢复之前的选择状态
+        const selectedTypes = document.getElementById('bookTypes').value;
+        if (selectedTypes) {
+            const selectedArray = selectedTypes.split(',');
+            document.querySelectorAll('#categoryCheckboxes input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = selectedArray.includes(checkbox.value);
+            });
+        }
+    }
+}
+
+/**
+ * 确认类别选择
+ */
+function confirmCategorySelection() {
+    const selectedCheckboxes = document.querySelectorAll('#categoryCheckboxes input[type="checkbox"]:checked');
+    const selectedTypes = Array.from(selectedCheckboxes).map(cb => cb.value);
+    const selectedChineseNames = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-chinese'));
+    
+    // 更新隐藏字段
+    document.getElementById('bookTypes').value = selectedTypes.join(',');
+    
+    // 更新显示文本
+    const selectedText = selectedChineseNames.length > 0 ? 
+        selectedChineseNames.join('、') : '请选择图书类别';
+    document.getElementById('selectedCategoriesText').textContent = selectedText;
+    
+    closeCategoryModal();
+}
+
+/**
+ * 关闭类别选择模态框
+ */
+function closeCategoryModal() {
+    const categoryModal = document.getElementById('categoryModal');
+    if (categoryModal) {
+        categoryModal.style.display = 'none';
+    }
+}
+
+/**
+ * 关闭所有模态框
+ */
+function closeModal() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+    });
 }
 
 /**
@@ -402,7 +522,7 @@ async function apiRequest(action, data = null) {
                 return { success: true, data: [] };
             }
             
-            try {
+try {
                 return JSON.parse(responseText);
             } catch (parseError) {
                 console.error(`JSON解析失败 (${action}):`, parseError, '响应文本:', responseText);
@@ -469,7 +589,7 @@ function displayBooks(books) {
             </td>
             <td>
                 <button class="action-btn edit" onclick="editBook(${book.id})">编辑</button>
-                <button class="action-btn delete" onclick="deleteBook(${book.id})">删除</button>
+<button class="action-btn delete" onclick="deleteBook(${book.id})">删除</button>
 </td>
         </tr>
     `).join('');
@@ -761,21 +881,25 @@ async function addBook(event) {
     const form = event.target;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    
-    // 获取选中的图书类别
-    const bookTypeCheckboxes = document.querySelectorAll('input[name="bookType"]:checked');
-    const bookTypes = Array.from(bookTypeCheckboxes).map(cb => parseInt(cb.value));
-    
-    // 验证必填字段
-    const requiredFields = ['bookTitle', 'bookAuthor', 'bookISBN', 'bookCampus', 'bookFloor', 'bookShelf'];
-    const missingFields = requiredFields.filter(field => !data[field]);
-    
-    if (missingFields.length > 0 || bookTypes.length === 0) {
-        showMessage('请填写所有必填字段并选择至少一个图书类别', 'error');
+
+    // 验证必填字段 - 修正字段名称匹配问题
+    if (!data.bookTitle || !data.bookAuthor || !data.bookISBN || !data.bookCampus || !data.bookFloor || !data.bookShelf) {
+        showMessage('请填写所有必填字段', 'error');
         return;
     }
-    
+
+    // 验证图书类别
+    const bookTypes = data.bookTypes;
+    if (!bookTypes) {
+        showMessage('请选择至少一个图书类别', 'error');
+        return;
+    }
+
     try {
+        // 将类别字符串转换为数组
+        data.bookTypes = bookTypes.split(',');
+
+        // 修正API请求数据字段名称
         const response = await apiRequest('addBook', {
             title: data.bookTitle,
             author: data.bookAuthor,
@@ -783,21 +907,21 @@ async function addBook(event) {
             campus: data.bookCampus,
             floor: data.bookFloor,
             shelf: data.bookShelf,
-            types: bookTypes
+            bookTypes: data.bookTypes
         });
-        
-        // 修复可选链操作符，使用传统方式检查
-        if (response && response.success) {
+
+        if (response?.success) {
             showMessage('图书添加成功！', 'success');
             form.reset();
-            await loadBooks();
-            updateStatistics();
+            // 重置类别选择
+            document.getElementById('bookTypes').value = '';
+            document.getElementById('selectedCategoriesText').textContent = '请选择图书类别';
+            await loadAllData();
         } else {
-            const errorMessage = response && response.message ? response.message : '未知错误';
-            showMessage('添加失败: ' + errorMessage, 'error');
+            showMessage('添加失败', 'error');
         }
     } catch (error) {
-        showMessage('添加失败：' + error.message, 'error');
+        showMessage('添加失败：网络错误', 'error');
     }
 }
 

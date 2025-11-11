@@ -34,11 +34,11 @@ public class BookShelfBase extends DataBaseLoad {
 
     public boolean addBook(Detail detail) {
         String book_type = Arrays.stream(detail.bookType()).map(Enum::name).collect(Collectors.joining(","));
-        for (int i = 0; i < detail.bookIds().length; i++) {
+        for (int i = 0; i < detail.bookNum(); i++) {
             try {
                 PreparedStatement add_pstmt = conn.prepareStatement(add_bool_sql);
                 add_pstmt.setString(1, detail.bookName());
-                add_pstmt.setInt(2, detail.bookNum());
+                add_pstmt.setInt(2, detail.bookIds()[i]);
                 add_pstmt.setDate(3, new java.sql.Date(detail.date().getTime()));
                 add_pstmt.setInt(4, 0);
                 add_pstmt.setString(5, book_type);
@@ -46,7 +46,7 @@ public class BookShelfBase extends DataBaseLoad {
                 add_pstmt.setString(7, detail.bookAuthor());
                 add_pstmt.executeUpdate();
             } catch (SQLException e) {
-
+                System.out.println(e.getMessage());
                 return false;
             }
         }

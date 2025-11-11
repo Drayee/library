@@ -231,25 +231,14 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="category-label">图书类别：</label>
-                                    <div class="category-checkboxes">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="0"> 文学
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="1"> 科技
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="2"> 历史
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="3"> 艺术
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="4"> 教育
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="bookType" value="5"> 其他
-                                        </label>
+                                    <div class="category-selection">
+                                        <button type="button" id="selectCategoryBtn" class="category-btn">
+                                            <span id="selectedCategoriesText">请选择图书类别</span>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                        <input type="hidden" id="bookTypes" name="bookTypes" value="">
                                     </div>
                                 </div>
                                 <button type="submit" class="action-btn">添加图书</button>
@@ -260,17 +249,20 @@
             </section>
         </main>
 
-        <!-- 编辑模态框 -->
-        <div id="editModal" class="modal">
+        <!-- 图书类别选择模态框 -->
+        <div id="categoryModal" class="modal">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
-                <h3 id="modalTitle">编辑信息</h3>
-                <form id="editForm">
-                    <div id="modalFormContent">
-                        <!-- 表单内容将通过JavaScript动态加载 -->
+                <h3>选择图书类别</h3>
+                <div class="category-modal-content">
+                    <div class="category-checkboxes-modal" id="categoryCheckboxes">
+                        <!-- 类别复选框将通过JavaScript动态加载 -->
                     </div>
-                    <button type="submit" class="action-btn">保存修改</button>
-                </form>
+                    <div class="modal-actions">
+                        <button type="button" id="confirmCategoryBtn" class="action-btn">确认选择</button>
+                        <button type="button" id="cancelCategoryBtn" class="action-btn secondary">取消</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

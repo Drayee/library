@@ -34,7 +34,7 @@
 }
 
 .page-title h1 {
-    font-size: 24px;
+font-size: 24px;
     color: #2a7e3f;
     margin: 0;
     font-weight: bold;
@@ -455,54 +455,114 @@ input, textarea, select {
     border-color: #b0b0b0;
 }
 
-/* 图书类别样式 */
-.category-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
+/* 图书类别选择按钮样式 */
+.category-selection {
+    margin-top: 10px;
+}
+
+.category-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
     color: #333;
 }
 
-.category-checkboxes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+.category-btn:hover {
+    border-color: #b0b0b0;
 }
 
-.checkbox-label {
+.category-btn:focus {
+    outline: none;
+    border-color: #2a7e3f;
+    box-shadow: 0 0 0 3px rgba(42, 126, 63, 0.1);
+}
+
+/* 类别选择模态框样式 */
+.category-modal-content {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+.category-checkboxes-modal {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.checkbox-label-modal {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 10px 15px;
     background: #f8f9fa;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
-.checkbox-label:hover {
+.checkbox-label-modal:hover {
     background: #e9ecef;
+    border-color: #2a7e3f;
 }
 
-.checkbox-label input[type="checkbox"] {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
+.checkbox-label-modal input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"]:checked {
+.checkbox-label-modal input[type="checkbox"]:checked {
     accent-color: #2a7e3f;
 }
 
-/* 确保所有输入框状态正确 */
-input:not([disabled]):not([readonly]) {
-    pointer-events: auto;
-    user-select: auto;
-    opacity: 1;
-    cursor: text;
+.checkbox-label-modal:has(input[type="checkbox"]:checked) {
+    background: #e8f5e8;
+    border-color: #2a7e3f;
 }
 
-/* 添加数据表单按钮样式 */
+/* 模态框操作按钮样式 */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.modal-actions .action-btn.secondary {
+    background: #6c757d;
+}
+
+.modal-actions .action-btn.secondary:hover {
+    background: #545b62;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .category-checkboxes-modal {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions .action-btn {
+        width: 100%;
+    }
+}
 .add-data-section .action-btn {
     width: 100%;
     padding: 12px;
