@@ -7,6 +7,8 @@ import com.library.userClass.Detail;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +32,8 @@ public class Administer extends HttpServlet {
         while ((line = request.getReader().readLine()) != null) {
             requestBody.append(line);
         }
+
+        System.out.println(requestBody.toString());
 
         Map<String ,Object> requestParams = objectMapper.readValue(requestBody.toString(), Map.class);
         String action = (String) requestParams.get("action");
@@ -73,21 +77,22 @@ public class Administer extends HttpServlet {
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
-        String bookName = (String) requestParams.get("bookName");
-        int bookNum = (int) requestParams.get("bookNum");
-        String bookAuthor = (String) requestParams.get("bookAuthor");
-        int[] bookAddresses = (int[]) requestParams.get("bookAddresses");
-        BookType bookType = (BookType) requestParams.get("bookType");
-        Date bookDate = (Date) requestParams.get("bookDate");
-        Detail detail = new Detail(new int[]{bookNum},bookName, 1,1, bookAuthor, new int[][]{bookAddresses}, new BookType[]{bookType}, bookDate);
-        if (BookShelf.getDataBase() != null && BookShelf.getDataBase().addBook(detail)) {
-            response.setContentType("application/json;charset=UTF-8");
-            response.setCharacterEncoding("UTF-8");
+        String title = (String) requestParams.get("data.title");
+        String author = (String) requestParams.get("data.author");
+        int isbn = (int) requestParams.get("data.isbn");
+        int campus = (int) requestParams.get("data.campus");
+        int floor = (int) requestParams.get("data.floor");
+        int shelf = (int) requestParams.get("data.shelf");
+        boolean isSuccess = BookShelf.getDataBase().addBook(new Detail(new int[]{isbn},title,
+                1,1, author,
+                new int[][]{new int[]{campus,floor,shelf}},
+                new BookType[]{BookType.OTHER}, new Date()));
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        if (isSuccess) {
             response.getWriter().write("{\"success\": true, \"message\": \"添加成功\"}");
         }
         else {
-            response.setContentType("application/json;charset=UTF-8");
-            response.setCharacterEncoding("UTF-8");
             response.getWriter().write("{\"success\": false, \"message\": \"添加失败\"}");
         }
     }

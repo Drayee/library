@@ -10,7 +10,7 @@ public class BookShelf extends InitDataBase {
     }
 
     public static BookShelfBase getDataBase() {
-        return null;
+        return dataBase;
     }
 
     public static String getBookName(int bookId) {

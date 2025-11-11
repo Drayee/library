@@ -138,7 +138,7 @@ color: #2a7e3f;
 /* 搜索容器样式 - 确保正确层级 */
 .search-container {
     display: flex;
-    gap: 10px;
+gap: 10px;
     align-items: center;
     position: relative;
     z-index: 5; /* 确保搜索元素在正确层级 */
@@ -425,6 +425,75 @@ input, textarea, select {
     border-color: #b0b0b0;
 }
 
+/* 下拉选择框样式 */
+.address-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: white;
+    pointer-events: auto !important;
+    user-select: auto !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+}
+
+.address-group select:focus {
+    outline: none;
+    border-color: #2a7e3f;
+    box-shadow: 0 0 0 3px rgba(42, 126, 63, 0.1);
+}
+
+.address-group select:hover {
+    border-color: #b0b0b0;
+}
+
+/* 图书类别样式 */
+.category-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.category-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label:hover {
+    background: #e9ecef;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    accent-color: #2a7e3f;
+}
+
 /* 确保所有输入框状态正确 */
 input:not([disabled]):not([readonly]) {
     pointer-events: auto;
@@ -461,7 +530,6 @@ input:not([disabled]):not([readonly]) {
     cursor: not-allowed;
     transform: none;
 }
-
 .form-group.focused {
     transform: translateY(-2px);
 }

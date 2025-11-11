@@ -292,56 +292,8 @@ function updateStatistics() {
 }
 
 // 搜索用户
-function searchUsers() {
-    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
-    if (searchTerm.trim() === '') {
-        displayUsers(usersData);
-        return;
-    }
-
-    const filteredUsers = usersData.filter(user =>
-        (user.name && user.name.toLowerCase().includes(searchTerm)) ||
-        (user.number && user.number.toLowerCase().includes(searchTerm)) ||
-        (user.email && user.email.toLowerCase().includes(searchTerm))
-    );
-
-    displayUsers(filteredUsers);
-}
-
 // 搜索图书
-function searchBooks() {
-    const searchTerm = document.getElementById('bookSearch').value.toLowerCase();
-    if (searchTerm.trim() === '') {
-        displayBooks(booksData);
-        return;
-    }
-
-    const filteredBooks = booksData.filter(book =>
-        (book.title && book.title.toLowerCase().includes(searchTerm)) ||
-        (book.author && book.author.toLowerCase().includes(searchTerm)) ||
-        (book.isbn && book.isbn.toLowerCase().includes(searchTerm))
-    );
-
-    displayBooks(filteredBooks);
-}
-
 // 搜索借阅记录
-function searchBorrow() {
-    const searchTerm = document.getElementById('borrowSearch').value.toLowerCase();
-    if (searchTerm.trim() === '') {
-        displayBorrowRecords(borrowData);
-        return;
-    }
-
-    const filteredRecords = borrowData.filter(record =>
-        (record.userId && record.userId.toString().includes(searchTerm)) ||
-        (record.bookId && record.bookId.toString().includes(searchTerm)) ||
-        (record.borrowDate && record.borrowDate.toLowerCase().includes(searchTerm))
-    );
-
-    displayBorrowRecords(filteredRecords);
-}
-
 // 页面加载完成后初始化 - 修复重复初始化问题
 document.addEventListener('DOMContentLoaded', function() {
     // 单一初始化入口
@@ -432,67 +384,6 @@ function fixAddFormInputs() {
     console.log('添加数据表单输入框修复完成');
 }
 
-// 重新绑定选项卡特定事件 - 增强版本
-function rebindTabEvents(tabId) {
-    // 确保该选项卡的搜索功能正常工作
-    setTimeout(() => {
-        bindSearchEvents();
-        fixAllInputElements();
-        
-        // 如果是添加数据选项卡，额外修复表单
-        if (tabId === 'add') {
-            bindAddFormEvents();
-            fixAddFormInputs();
-        }
-    }, 100);
-}
-
-// 显示管理员界面 - 彻底修复版本
-function showAdminInterface() {
-    console.log('显示管理员界面...');
-    
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('adminInterface').style.display = 'block';
-    document.getElementById('adminName').textContent = currentUser.username;
-    document.getElementById('welcomeTitle').textContent = `欢迎回来，${currentUser.username}！`;
-    
-    // 关键修复：重新绑定所有事件，确保功能可用
-    setTimeout(() => {
-        console.log('重新绑定管理员界面事件...');
-        rebindSearchEvents();
-        fixAllInputElements();
-        bindAddFormEvents();
-        
-        // 特别修复添加数据选项卡的输入框
-        const addTab = document.getElementById('add');
-        if (addTab && addTab.classList.contains('active')) {
-            console.log('当前在添加数据选项卡，特别修复...');
-            fixAddFormInputs();
-        }
-        
-        console.log('管理员界面事件重新绑定完成');
-    }, 200);
-}
-
-// 重新绑定选项卡特定事件
-function rebindTabEvents(tabId) {
-    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
-    
-    // 确保该选项卡的搜索功能正常工作
-    setTimeout(() => {
-        bindSearchEvents();
-        fixAllInputElements();
-        
-        // 如果是添加数据选项卡，额外修复表单
-        if (tabId === 'add') {
-            console.log('特别修复添加数据选项卡...');
-            bindAddFormEvents();
-            fixAddFormInputs();
-        }
-    }, 100);
-}
-
-// 设置事件监听器 - 优化版本（确保添加表单事件绑定）
 // 修改setupEventListeners函数，确保正确绑定添加表单事件
 function setupEventListeners() {
     // 延迟执行以确保DOM元素已加载
@@ -633,22 +524,6 @@ function fixAddFormInputs() {
 }
 
 // 重新绑定选项卡特定事件 - 增强版本
-function rebindTabEvents(tabId) {
-    console.log(`重新绑定选项卡 ${tabId} 的事件...`);
-    
-    // 确保该选项卡的搜索功能正常工作
-    setTimeout(() => {
-        bindSearchEvents();
-        fixAllInputElements();
-        
-        // 如果是添加数据选项卡，额外修复表单
-        if (tabId === 'add') {
-            bindAddFormEvents();
-            fixAddFormInputs();
-        }
-    }, 100);
-}
-
 // 显示管理员界面 - 彻底修复版本
 function showAdminInterface() {
     console.log('显示管理员界面...');
@@ -764,8 +639,8 @@ function showEditModal(data, type) {
             </div>
         `;
     } else {
-        formContent.innerHTML = `
-            <input type="hidden" name="id" value="${data.id}">
+formContent.innerHTML = `
+<input type="hidden" name="id" value="${data.id}">
             <div class="form-group">
                 <input type="text" name="title" value="${data.title || ''}" placeholder="书名" required>
             </div>
@@ -774,9 +649,6 @@ function showEditModal(data, type) {
             </div>
             <div class="form-group">
                 <input type="text" name="isbn" value="${data.isbn || ''}" placeholder="ISBN" required>
-            </div>
-            <div class="form-group">
-                <input type="number" name="stock" value="${data.stock || 0}" placeholder="库存数量" required>
             </div>
         `;
     }
@@ -1049,10 +921,16 @@ async function addBook(event) {
     const bookTitle = document.getElementById('bookTitle').value;
     const bookAuthor = document.getElementById('bookAuthor').value;
     const bookISBN = document.getElementById('bookISBN').value;
-    const bookStock = document.getElementById('bookStock').value;
+    const bookCampus = document.getElementById('bookCampus').value;
+    const bookFloor = document.getElementById('bookFloor').value;
+    const bookShelf = document.getElementById('bookShelf').value;
     
-    if (!bookTitle || !bookAuthor || !bookISBN || !bookStock) {
-        showMessage('请填写所有必填字段', 'error');
+    // 获取选中的图书类别
+    const bookTypeCheckboxes = document.querySelectorAll('input[name="bookType"]:checked');
+    const bookTypes = Array.from(bookTypeCheckboxes).map(checkbox => parseInt(checkbox.value));
+    
+    if (!bookTitle || !bookAuthor || !bookISBN || !bookCampus || !bookFloor || !bookShelf || bookTypes.length === 0) {
+        showMessage('请填写所有必填字段并选择至少一个图书类别', 'error');
         return;
     }
     
@@ -1068,7 +946,10 @@ async function addBook(event) {
                     title: bookTitle,
                     author: bookAuthor,
                     isbn: bookISBN,
-                    stock: parseInt(bookStock)
+                    campus: bookCampus,
+                    floor: bookFloor,
+                    shelf: bookShelf,
+                    types: bookTypes
                 }
             })
         });
