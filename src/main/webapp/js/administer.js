@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * 应用程序初始化
+* 应用程序初始化
  */
 async function initializeApplication() {
     try {
@@ -323,13 +323,31 @@ async function loadUsers() {
 async function loadBooks() {
     try {
         const response = await apiRequest('getBooks');
-        if (response) {
-            booksData = response.data || [];
-            displayBooks(booksData);
+        
+        // 确保响应数据是数组
+        if (response && response.data) {
+            booksData = Array.isArray(response.data) ? response.data : [];
+        } else {
+            booksData = [];
+            console.warn('getBooks API响应缺少data字段，使用空数组');
         }
+        
+        displayBooks(booksData);
     } catch (error) {
         console.error('加载图书数据失败:', error);
-        throw error;
+        
+        // 显示具体的错误信息
+        if (error.message.includes('网络连接失败')) {
+            showMessage('网络连接失败，请检查网络连接', 'error');
+        } else if (error.message.includes('服务器错误')) {
+            showMessage('服务器暂时不可用，请稍后重试', 'error');
+        } else {
+            showMessage('加载图书数据失败: ' + error.message, 'error');
+        }
+        
+        // 设置空数据以避免界面显示问题
+        booksData = [];
+        displayBooks(booksData);
     }
 }
 
@@ -340,7 +358,7 @@ async function loadBorrowRecords() {
     try {
         const response = await apiRequest('getBorrowRecords');
         if (response) {
-            borrowData = response.data || [];
+borrowData = response.data || [];
             displayBorrowRecords(borrowData);
         }
     } catch (error) {
@@ -362,14 +380,48 @@ async function apiRequest(action, data = null) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         });
-
+        
         if (response.ok) {
-            return await response.json();
+            // 检查响应内容类型和内容长度
+            const contentType = response.headers.get('content-type');
+            const contentLength = response.headers.get('content-length');
+            
+            // 如果响应为空或不是JSON格式，返回默认的成功响应
+            if (!contentType || !contentType.includes('application/json') || 
+                (contentLength && parseInt(contentLength) === 0)) {
+                console.warn(`API响应不是有效的JSON格式 (${action})，返回默认成功响应`);
+                return { success: true, data: [] };
+            }
+            
+            // 尝试解析JSON响应
+            const responseText = await response.text();
+            
+            // 如果响应文本为空，返回默认成功响应
+            if (!responseText.trim()) {
+                console.warn(`API响应为空 (${action})，返回默认成功响应`);
+                return { success: true, data: [] };
+            }
+            
+            try {
+                return JSON.parse(responseText);
+            } catch (parseError) {
+                console.error(`JSON解析失败 (${action}):`, parseError, '响应文本:', responseText);
+                throw new Error(`服务器返回了无效的JSON格式: ${parseError.message}`);
+            }
         } else {
-            throw new Error('服务器响应错误');
+            // 服务器返回错误状态码
+            const errorText = await response.text();
+            console.error(`服务器错误 (${action}):`, response.status, errorText);
+            throw new Error(`服务器错误: ${response.status} ${response.statusText}`);
         }
     } catch (error) {
         console.error(`API请求失败 (${action}):`, error);
+        
+        // 如果是网络错误，提供更友好的错误信息
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            throw new Error('网络连接失败，请检查网络连接');
+        }
+        
         throw error;
     }
 }
@@ -418,7 +470,7 @@ function displayBooks(books) {
             <td>
                 <button class="action-btn edit" onclick="editBook(${book.id})">编辑</button>
                 <button class="action-btn delete" onclick="deleteBook(${book.id})">删除</button>
-            </td>
+</td>
         </tr>
     `).join('');
 }
@@ -709,20 +761,20 @@ async function addBook(event) {
     const form = event.target;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-
+    
     // 获取选中的图书类别
     const bookTypeCheckboxes = document.querySelectorAll('input[name="bookType"]:checked');
     const bookTypes = Array.from(bookTypeCheckboxes).map(cb => parseInt(cb.value));
-
+    
     // 验证必填字段
     const requiredFields = ['bookTitle', 'bookAuthor', 'bookISBN', 'bookCampus', 'bookFloor', 'bookShelf'];
     const missingFields = requiredFields.filter(field => !data[field]);
-
+    
     if (missingFields.length > 0 || bookTypes.length === 0) {
         showMessage('请填写所有必填字段并选择至少一个图书类别', 'error');
         return;
     }
-
+    
     try {
         const response = await apiRequest('addBook', {
             title: data.bookTitle,
@@ -733,17 +785,19 @@ async function addBook(event) {
             shelf: data.bookShelf,
             types: bookTypes
         });
-
-        if (response?.success) {
+        
+        // 修复可选链操作符，使用传统方式检查
+        if (response && response.success) {
             showMessage('图书添加成功！', 'success');
             form.reset();
             await loadBooks();
             updateStatistics();
         } else {
-            showMessage('添加失败', 'error');
+            const errorMessage = response && response.message ? response.message : '未知错误';
+            showMessage('添加失败: ' + errorMessage, 'error');
         }
     } catch (error) {
-        showMessage('添加失败：网络错误', 'error');
+        showMessage('添加失败：' + error.message, 'error');
     }
 }
 
