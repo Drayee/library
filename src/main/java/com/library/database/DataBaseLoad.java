@@ -3,7 +3,6 @@ package com.library.database;
 import java.sql.*;
 import java.util.Random;
 
-
 public abstract class DataBaseLoad implements IDataBase {
     private static final String user;
     private static final String password;
