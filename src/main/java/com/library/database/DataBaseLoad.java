@@ -13,8 +13,6 @@ public abstract class DataBaseLoad implements IDataBase {
 
     protected static KEY key;
 
-    protected static PreparedStatement select_pstmt;
-
     public String getUser(KEY key) {
         if (!DataBaseLoad.key.equals(key)) {
             return null;
@@ -63,8 +61,9 @@ public abstract class DataBaseLoad implements IDataBase {
         this.table_name = table_name;
         sql = "SELECT * FROM " + table_name;
         try {
-            select_pstmt = conn.prepareStatement(sql);
+            PreparedStatement select_pstmt = conn.prepareStatement(sql);
             rs = select_pstmt.executeQuery();
+            rs.next();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

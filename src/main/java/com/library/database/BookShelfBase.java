@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 public class BookShelfBase extends DataBaseLoad {
     private final String get_book_sql = "SELECT name FROM " + table_name + " WHERE idbook = ?";
     private final String add_bool_sql = "INSERT INTO " + table_name + " (bookname,booknumber,bookadddate,booklender,booktype,bookaddress,bookauthor) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private final String get_book_detail_sql = "SELECT * FROM " + table_name;
+    private final String get_book_detail_sql = "SELECT * FROM " + table_name + " WHERE idbook = ?";
+    private final String get_book_all_id_sql = "SELECT * FROM " + table_name;
 
     public BookShelfBase() {
         super("bookshelflibrary");
@@ -53,13 +54,27 @@ public class BookShelfBase extends DataBaseLoad {
         return true;
     }
 
-    public Detail[] getBookDetails(int bookId) {
+    public Detail[] getAllBookDetail() {
+        try{
+            PreparedStatement pstmt = conn.prepareStatement(get_book_all_id_sql);
+            rs = pstmt.executeQuery();
+            Detail[] details = new Detail[rs.getMetaData().getColumnCount()];
+            while (rs.next()) {
+                details[rs.getInt("idbook")] = this.getBookDetail(rs.getInt("idbook"));
+            }
+            return details;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public Detail getBookDetail(int bookId) {
         try {
             PreparedStatement pstmt = conn.prepareStatement(get_book_detail_sql);
+            pstmt.setInt(1, bookId);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                return new Detail[]{
-                        new Detail(
+                return new Detail(
                                 new int[]{bookId},
                                 rs.getString("bookname"),
                                 rs.getInt("booknum"),
@@ -68,8 +83,7 @@ public class BookShelfBase extends DataBaseLoad {
                                 new int[][]{Arrays.stream(rs.getString("bookaddress").substring(1, rs.getString("bookaddress").length() - 1).split(",")).mapToInt(Integer::parseInt).toArray()},
                                 Arrays.stream(rs.getString("booktype").split(",")).map(BookType::valueOf).toArray(BookType[]::new),
                                 rs.getDate("bookadddate")
-                        )
-                };
+                );
             }
         } catch (SQLException e) {
             return null;

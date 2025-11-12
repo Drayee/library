@@ -153,11 +153,11 @@ function loadCategoryData() {
     const categories = {
         "FICTION": "科幻",
         "NON_FICTION": "非-fiction",
-        "SCIENCE": "科学",
+"SCIENCE": "科学",
         "HISTORY": "历史",
         "FOREIGN_LANGUAGE": "外语",
         "MATH": "数学",
-        "BIOLOGY": "生物",
+"BIOLOGY": "生物",
         "GEARTH_SCIENCE": "地球科学",
         "COMPUTER_SCIENCE": "计算机科学",
         "PHYSICS": "物理",
@@ -174,7 +174,7 @@ function loadCategoryData() {
             <input type="checkbox" name="bookType" value="${key}" data-chinese="${value}">
             ${value}
         </label>
-    `).join('');
+`).join('');
 }
 
 /**
@@ -427,13 +427,40 @@ async function loadAllData() {
 async function loadUsers() {
     try {
         const response = await apiRequest('getUsers');
-        if (response) {
-            usersData = response.data || [];
-            displayUsers(usersData);
+        
+        // 处理各种可能的响应格式
+        if (response && response.success) {
+            // 确保data是数组
+            if (Array.isArray(response.data)) {
+                usersData = response.data;
+            } else if (response.data && typeof response.data === 'object') {
+                // 如果data是对象，尝试转换为数组
+                usersData = Object.values(response.data);
+            } else {
+                usersData = [];
+                console.warn('getUsers API返回的数据格式不正确，使用空数组');
+            }
+        } else {
+            usersData = [];
+            console.warn('getUsers API返回失败响应，使用空数组');
         }
+        
+        displayUsers(usersData);
     } catch (error) {
         console.error('加载用户数据失败:', error);
-        throw error;
+        
+        // 显示具体的错误信息
+        if (error.message.includes('网络连接失败')) {
+            showMessage('网络连接失败，请检查网络连接', 'error');
+        } else if (error.message.includes('服务器错误')) {
+            showMessage('服务器暂时不可用，请稍后重试', 'error');
+        } else {
+            showMessage('加载用户数据失败: ' + error.message, 'error');
+        }
+        
+        // 设置空数据以避免界面显示问题
+        usersData = [];
+        displayUsers(usersData);
     }
 }
 
@@ -444,12 +471,21 @@ async function loadBooks() {
     try {
         const response = await apiRequest('getBooks');
         
-        // 确保响应数据是数组
-        if (response && response.data) {
-            booksData = Array.isArray(response.data) ? response.data : [];
+        // 处理各种可能的响应格式
+        if (response && response.success) {
+            // 确保data是数组
+            if (Array.isArray(response.data)) {
+                booksData = response.data;
+            } else if (response.data && typeof response.data === 'object') {
+                // 如果data是对象，尝试转换为数组
+                booksData = Object.values(response.data);
+            } else {
+                booksData = [];
+                console.warn('getBooks API返回的数据格式不正确，使用空数组');
+            }
         } else {
             booksData = [];
-            console.warn('getBooks API响应缺少data字段，使用空数组');
+            console.warn('getBooks API返回失败响应，使用空数组');
         }
         
         displayBooks(booksData);
@@ -477,13 +513,40 @@ async function loadBooks() {
 async function loadBorrowRecords() {
     try {
         const response = await apiRequest('getBorrowRecords');
-        if (response) {
-borrowData = response.data || [];
-            displayBorrowRecords(borrowData);
+        
+        // 处理各种可能的响应格式
+        if (response && response.success) {
+            // 确保data是数组
+            if (Array.isArray(response.data)) {
+                borrowData = response.data;
+            } else if (response.data && typeof response.data === 'object') {
+                // 如果data是对象，尝试转换为数组
+                borrowData = Object.values(response.data);
+            } else {
+                borrowData = [];
+                console.warn('getBorrowRecords API返回的数据格式不正确，使用空数组');
+            }
+        } else {
+            borrowData = [];
+            console.warn('getBorrowRecords API返回失败响应，使用空数组');
         }
+        
+        displayBorrowRecords(borrowData);
     } catch (error) {
         console.error('加载借阅记录失败:', error);
-        throw error;
+        
+        // 显示具体的错误信息
+        if (error.message.includes('网络连接失败')) {
+            showMessage('网络连接失败，请检查网络连接', 'error');
+        } else if (error.message.includes('服务器错误')) {
+            showMessage('服务器暂时不可用，请稍后重试', 'error');
+        } else {
+            showMessage('加载借阅记录失败: ' + error.message, 'error');
+        }
+        
+        // 设置空数据以避免界面显示问题
+        borrowData = [];
+        displayBorrowRecords(borrowData);
     }
 }
 
@@ -688,6 +751,12 @@ function loadTabData(tabId) {
         case 'borrow':
             loadBorrowRecords();
             break;
+        case 'addUser':
+            // 添加用户选项卡不需要加载额外数据
+            break;
+        case 'addBook':
+            // 添加书籍选项卡不需要加载额外数据
+            break;
     }
 }
 
@@ -849,7 +918,7 @@ async function addUser(event) {
     const data = Object.fromEntries(formData.entries());
 
     // 验证必填字段
-    if (!data.userName || !data.userNumber || !data.userEmail) {
+    if (!data.userName) {
         showMessage('请填写所有必填字段', 'error');
         return;
     }

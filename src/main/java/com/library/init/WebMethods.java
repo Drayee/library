@@ -42,4 +42,35 @@ public class WebMethods {
         }
         return bookTypesTrans;
     }
+
+    public static boolean addUser(String username, String email, String studentid) {
+        if (User.getDataBase().AddUser(username, "123456")) {
+            int id = User.getDataBase().getUserID(username);
+            return UserBind.AddUser(id, email, studentid);
+        }
+        return false;
+    }
+
+    public static Map<Integer, Object> getUsers() {
+        try{
+            Map<Integer, String> users = User.getDataBase().getAllUsers();
+            Map<Integer, Object> usersInfo = new HashMap<>();
+            for (Map.Entry<Integer, String> user : users.entrySet()) {
+                Map<String ,String> map = new HashMap<>();
+                int id = user.getKey();
+                String name = user.getValue();
+                Map<String, Object> user_bind = UserBind.getUser(id);
+                String email, studentid;
+                email = user_bind.get("email") != null ? user_bind.get("email").toString() : "null";
+                studentid = user_bind.get("studentid") != null ? user_bind.get("studentid").toString() : "null";
+                map.put("name", name);
+                map.put("email", email);
+                map.put("studentid", studentid);
+                usersInfo.put(user.getKey(), map);
+            }return usersInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

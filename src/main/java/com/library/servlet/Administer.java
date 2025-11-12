@@ -2,6 +2,7 @@ package com.library.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.database.BookShelfBase;
 import com.library.init.BookShelf;
+import com.library.init.User;
 import com.library.init.WebMethods;
 import com.library.userClass.BookType;
 import com.library.userClass.Detail;
@@ -12,6 +13,7 @@ import jakarta.servlet.annotation.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 @WebServlet(name = "Administer", value = "/Administer")
 public class Administer extends HttpServlet {
@@ -42,8 +44,14 @@ public class Administer extends HttpServlet {
             case "login":
                 login(response, requestParams);
                 break;
+            case "getUsers":
+                getUser(response);
+                break;
             case "getBooks":
                 getBook(response);
+                break;
+            case "addUser":
+                addUser(response, requestParams);
                 break;
             case "addBook":
                 addBook(response, requestParams);
@@ -70,9 +78,46 @@ public class Administer extends HttpServlet {
         }
     }
 
+    private void getUser(HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        List<Map<String , Object>> list = new ArrayList<>();
+        Map<Integer, Object> users = WebMethods.getUsers();
+        if (users != null) {
+            for (Map.Entry<Integer, Object> user : users.entrySet()) {
+                Map<String, Object> map = (Map<String, Object>) user.getValue();
+                map.put("id", user.getKey());
+                map.put("username", map.get("name"));
+                map.put("email", map.get("email"));
+                map.put("studentid", map.get("studentid"));
+                map.put("status", "active");
+                list.add(map);
+            }
+        }
+        response.getWriter().write("{\"success\": true, \"message\": \"获取成功\", \"data\": " + objectMapper.writeValueAsString(list) + "}");
+
+    }
+
     private void getBook(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
+    }
+
+    private void addUser(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
+        Map<String, Object> data = (Map<String, Object>) requestParams.get("data");
+        String name = (String) data.get("name");
+        String email = (String) data.get("email");
+        String studentid = (String) data.get("studentid");
+        boolean isSuccess = WebMethods.addUser(name,email,studentid);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        if (isSuccess) {
+            response.getWriter().write("{\"success\": true, \"message\": \"添加成功\"}");
+        }
+        else {
+            response.getWriter().write("{\"success\": false, \"message\": \"添加失败\"}");
+        }
     }
 
     private void addBook(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
