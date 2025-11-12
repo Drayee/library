@@ -208,7 +208,7 @@ function confirmCategorySelection() {
     document.getElementById('bookTypes').value = selectedTypes.join(',');
     
     // 更新显示文本
-    const selectedText = selectedChineseNames.length > 0 ? 
+    const selectedText = selectedChineseNames.length > 0 ?
         selectedChineseNames.join('、') : '请选择图书类别';
     document.getElementById('selectedCategoriesText').textContent = selectedText;
     
@@ -223,15 +223,6 @@ function closeCategoryModal() {
     if (categoryModal) {
         categoryModal.style.display = 'none';
     }
-}
-
-/**
- * 关闭所有模态框
- */
-function closeModal() {
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.style.display = 'none';
-    });
 }
 
 /**
@@ -585,9 +576,9 @@ async function apiRequest(action, data = null) {
                 return { success: true, data: [] };
             }
             
-try {
+            try {
                 return JSON.parse(responseText);
-            } catch (parseError) {
+} catch (parseError) {
                 console.error(`JSON解析失败 (${action}):`, parseError, '响应文本:', responseText);
                 throw new Error(`服务器返回了无效的JSON格式: ${parseError.message}`);
             }

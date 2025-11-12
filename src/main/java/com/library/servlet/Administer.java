@@ -1,8 +1,6 @@
 package com.library.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.library.database.BookShelfBase;
 import com.library.init.BookShelf;
-import com.library.init.User;
 import com.library.init.WebMethods;
 import com.library.userClass.BookType;
 import com.library.userClass.Detail;
@@ -10,7 +8,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -29,6 +26,10 @@ public class Administer extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 
+        Cookie[] cookies = request.getCookies();
+        int uniqueId = -1;
+        if (cookies != null) {for (Cookie cookie : cookies) {if (cookie.getName().equals("uniqueId")) {uniqueId = Integer.parseInt(cookie.getValue());break;}}}
+
         StringBuilder requestBody = new StringBuilder();
         String line;
         while ((line = request.getReader().readLine()) != null) {
@@ -39,26 +40,35 @@ public class Administer extends HttpServlet {
 
         Map<String ,Object> requestParams = objectMapper.readValue(requestBody.toString(), Map.class);
         String action = (String) requestParams.get("action");
+        if (Objects.equals(action, "login")) {
+            login(response, requestParams);
+            return;
+        }
 
-        switch (action) {
-            case "login":
-                login(response, requestParams);
+        System.out.println(WebMethods.getUniqueId());
+        if (uniqueId != WebMethods.getUniqueId()) {
+            response.setContentType("application/json;charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"success\": false, \"message\": \"权限有误请重新登录\"}");
+        }else {
+            switch (action) {
+                case "getUsers":
+                    getUser(response);
+                    break;
+                case "getBooks":
+                    getBook(response);
+                    break;
+                case "addUser":
+                    addUser(response, requestParams);
                 break;
-            case "getUsers":
-                getUser(response);
-                break;
-            case "getBooks":
-                getBook(response);
-                break;
-            case "addUser":
-                addUser(response, requestParams);
-                break;
-            case "addBook":
-                addBook(response, requestParams);
-                break;
-            default:
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"success\": false, \"message\": \"未知操作\"}");
+                    case "addBook":
+                    addBook(response, requestParams);
+                    break;
+                default:
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"success\": false, \"message\": \"未知操作\"}");
+                    break;
+            }
         }
 
     }
@@ -66,6 +76,12 @@ public class Administer extends HttpServlet {
     private void login(HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
         String username = (String) requestParams.get("username");
         String password = (String) requestParams.get("password");
+
+        Random seed = new Random();
+        int uniqueId = seed.nextInt(2147483647);
+        WebMethods.setUniqueId(uniqueId);
+        Cookie uniqueCookie = new Cookie("uniqueId", Integer.toString(uniqueId));
+        response.addCookie(uniqueCookie);
 
         if (username.equals("admin") && password.equals("123456")) {
             response.setContentType("application/json;charset=UTF-8");
@@ -81,22 +97,25 @@ public class Administer extends HttpServlet {
     private void getUser(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-
-        List<Map<String , Object>> list = new ArrayList<>();
-        Map<Integer, Object> users = WebMethods.getUsers();
-        if (users != null) {
-            for (Map.Entry<Integer, Object> user : users.entrySet()) {
-                Map<String, Object> map = (Map<String, Object>) user.getValue();
-                map.put("id", user.getKey());
-                map.put("username", map.get("name"));
-                map.put("email", map.get("email"));
-                map.put("studentid", map.get("studentid"));
-                map.put("status", "active");
-                list.add(map);
+        try {
+            List<Map<String , Object>> list = new ArrayList<>();
+            Map<Integer, Object> users = WebMethods.getUsers();
+            if (users != null) {
+                for (Map.Entry<Integer, Object> user : users.entrySet()) {
+                    Map<String, Object> map = (Map<String, Object>) user.getValue();
+                    map.put("id", user.getKey());
+                    map.put("username", map.get("name"));
+                    map.put("email", map.get("email"));
+                    map.put("studentid", map.get("studentid"));
+                    map.put("status", "active");
+                    list.add(map);
+                }
             }
+            response.getWriter().write("{\"success\": true, \"message\": \"获取成功\", \"data\": " + objectMapper.writeValueAsString(list) + "}");
         }
-        response.getWriter().write("{\"success\": true, \"message\": \"获取成功\", \"data\": " + objectMapper.writeValueAsString(list) + "}");
-
+        catch (Exception e) {
+            response.getWriter().write("{\"success\": false, \"message\": \"获取失败\", \"data\": " + e.getMessage() + "}");
+        }
     }
 
     private void getBook(HttpServletResponse response) throws IOException {

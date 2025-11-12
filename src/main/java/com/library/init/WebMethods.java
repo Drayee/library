@@ -12,19 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebMethods {
-//    private static final File typeTransformFile = new File("src/main/resources/type_transform.json");
-//    private static final ObjectMapper objectMapper = new ObjectMapper();
-//    private static final Map<String, BookType> bookTypeMap = new HashMap<>();
-//    static {
-//        try {
-//            Map<String, String> typeTransform = objectMapper.readValue(typeTransformFile, Map.class);
-//            for (Map.Entry<String, String> entry : typeTransform.entrySet()) {
-//                bookTypeMap.put(entry.getValue(), BookType.valueOf(entry.getKey()));
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    private static int uniqueId;
+
+    public static int getUniqueId() {
+        return uniqueId;
+    }
+
+    public static void setUniqueId(int uniqueId) {
+        WebMethods.uniqueId = uniqueId;
+    }
 
     public static void redirect(HttpServletRequest request, HttpServletResponse response) throws jakarta.servlet.ServletException, IOException {
         response.setContentType("text/plain;charset=UTF-8");
@@ -69,7 +65,6 @@ public class WebMethods {
                 usersInfo.put(user.getKey(), map);
             }return usersInfo;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
