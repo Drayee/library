@@ -7,6 +7,7 @@ public record Detail(
         String bookName,
         int bookNum,
         int bookLendNum,
+        String[] isbn,
         String bookAuthor,
         int[][] bookAddresses,
         BookType[] bookType,

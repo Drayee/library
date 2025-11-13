@@ -8,7 +8,6 @@ public abstract class DataBaseLoad implements IDataBase {
     private static final String password;
     protected static final Connection conn;
     protected static final Statement stmt;
-    protected static ResultSet rs;
 
     protected static KEY key;
 
@@ -24,13 +23,6 @@ public abstract class DataBaseLoad implements IDataBase {
             return null;
         }
         return password;
-    }
-
-    public ResultSet getResultSet(KEY key) {
-        if (!DataBaseLoad.key.equals(key)) {
-            return null;
-        }
-        return rs;
     }
 
     static {
@@ -61,8 +53,9 @@ public abstract class DataBaseLoad implements IDataBase {
         sql = "SELECT * FROM " + table_name;
         try {
             PreparedStatement select_pstmt = conn.prepareStatement(sql);
-            rs = select_pstmt.executeQuery();
+            ResultSet rs = select_pstmt.executeQuery();
             rs.next();
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -73,13 +66,8 @@ public abstract class DataBaseLoad implements IDataBase {
         }
     }
 
-    protected String getSql() {
-        return sql;
-    }
-
     public void DataBaseLoadClose() {
         try {
-            rs.close();
             conn.close();
             stmt.close();
         } catch (SQLException e) {
@@ -98,7 +86,10 @@ public abstract class DataBaseLoad implements IDataBase {
 
     public Object getField(String field) {
         try {
-            return rs.getObject(field);
+            ResultSet rs = stmt.executeQuery(sql);
+            Object object = rs.getObject(field);
+            rs.close();
+            return object;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

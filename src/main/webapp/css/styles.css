@@ -35,7 +35,6 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
     position: relative;
     will-change: background-position; /* 优化动画性能 */
 }

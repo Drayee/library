@@ -1,9 +1,11 @@
 package com.library.database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class BindDataBase extends DataBaseLoad{
     private final String add_sql = "INSERT INTO userbind (iduser, email, studentid) VALUES (?, ?, ?)";
@@ -30,11 +32,12 @@ public class BindDataBase extends DataBaseLoad{
         try {
             PreparedStatement check_pstmt = conn.prepareStatement(get_sql);
             check_pstmt.setInt(1, iduser);
-            rs = check_pstmt.executeQuery();
+            ResultSet rs = check_pstmt.executeQuery();
             if (rs.next()) {
                 map.put("email", rs.getString("email"));
                 map.put("studentid", rs.getString("studentid"));
             }
+            rs.close();
         } catch (SQLException e) {
             return null;
         }

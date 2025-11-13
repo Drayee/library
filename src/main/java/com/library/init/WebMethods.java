@@ -1,15 +1,17 @@
 package com.library.init;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.userClass.BookType;
 import com.library.userClass.Detail;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class WebMethods {
     private static int uniqueId;
@@ -47,6 +49,16 @@ public class WebMethods {
         return false;
     }
 
+    public static Map<Integer, Object> getBorrowRecords() {
+        try{
+            Map<Integer, Object> records = new HashMap<>();
+
+            return records;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static Map<Integer, Object> getUsers() {
         try{
             Map<Integer, String> users = User.getDataBase().getAllUsers();
@@ -67,5 +79,36 @@ public class WebMethods {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Detail[] DetailToDetails(Detail[] details) {
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<Detail> detailsTrans = new ArrayList<>();
+
+        Detail detailTemp;
+        for (Detail detail : details) {
+            if (detail == null) {
+                continue;
+            }
+            if (!names.contains(detail.bookName())) {
+                names.add(detail.bookName());
+                detailsTrans.add(detail);
+            }else {
+                int index = names.indexOf(detail.bookName());
+                detailTemp = detailsTrans.get(index);
+                detailsTrans.set(index, new Detail(
+                        IntStream.concat(IntStream.of(detailTemp.bookIds()), IntStream.of(detail.bookIds())).toArray(),
+                        detailTemp.bookName(),
+                        detailTemp.bookNum() + detail.bookNum(),
+                        detailTemp.bookLendNum() + detail.bookLendNum(),
+                        Stream.concat(Arrays.stream(detailTemp.isbn()), Arrays.stream(detail.isbn())).toArray(String[]::new),
+                        detailTemp.bookAuthor(),
+                        detailTemp.bookAddresses(),
+                        detailTemp.bookType(),
+                        detailTemp.date()
+                ));
+            }
+        }
+        return detailsTrans.toArray(new Detail[0]);
     }
 }

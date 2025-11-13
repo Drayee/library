@@ -5,6 +5,7 @@ import com.library.userClass.Detail;
 
 import java.sql.Array;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -23,9 +24,11 @@ public class BookShelfBase extends DataBaseLoad {
         try {
             PreparedStatement check_pstmt = conn.prepareStatement(get_book_sql);
             check_pstmt.setInt(1, bookId);
-            rs = check_pstmt.executeQuery();
+            ResultSet rs = check_pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getString("bookname");
+                String bookName = rs.getString("bookname");
+                rs.close();
+                return bookName;
             }
         } catch (SQLException e) {
             return e.getMessage();
@@ -57,11 +60,12 @@ public class BookShelfBase extends DataBaseLoad {
     public Detail[] getAllBookDetail() {
         try{
             PreparedStatement pstmt = conn.prepareStatement(get_book_all_id_sql);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             Detail[] details = new Detail[rs.getMetaData().getColumnCount()];
             while (rs.next()) {
                 details[rs.getInt("idbook")] = this.getBookDetail(rs.getInt("idbook"));
             }
+            rs.close();
             return details;
         } catch (SQLException e) {
             return null;
@@ -72,18 +76,21 @@ public class BookShelfBase extends DataBaseLoad {
         try {
             PreparedStatement pstmt = conn.prepareStatement(get_book_detail_sql);
             pstmt.setInt(1, bookId);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return new Detail(
+                 Detail detail = new Detail(
                                 new int[]{bookId},
                                 rs.getString("bookname"),
-                                rs.getInt("booknum"),
-                                rs.getInt("booklender"),
+                                1,
+                                rs.getString("booklender").equals("null") ? 0 : 1,
+                                new String[]{rs.getString("booknumber")},
                                 rs.getString("bookauthor"),
-                                new int[][]{Arrays.stream(rs.getString("bookaddress").substring(1, rs.getString("bookaddress").length() - 1).split(",")).mapToInt(Integer::parseInt).toArray()},
+                                new int[][]{Arrays.stream(rs.getString("bookaddress").replaceAll("[\\[\\]]", "").split(",")).map(String::trim).mapToInt(Integer::parseInt).toArray()},
                                 Arrays.stream(rs.getString("booktype").split(",")).map(BookType::valueOf).toArray(BookType[]::new),
                                 rs.getDate("bookadddate")
                 );
+                 rs.close();
+                 return detail;
             }
         } catch (SQLException e) {
             return null;

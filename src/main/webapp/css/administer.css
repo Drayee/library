@@ -304,7 +304,6 @@ input, textarea, select {
     background: white;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
     margin-top: 20px;
     overflow-x: auto;
 }

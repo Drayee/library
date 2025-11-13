@@ -2,6 +2,7 @@ package com.library.init;
 
 import com.library.database.BookShelfBase;
 import com.library.userClass.Books;
+import com.library.userClass.Detail;
 
 public class BookShelf extends InitDataBase {
     private static final BookShelfBase dataBase;
@@ -15,6 +16,10 @@ public class BookShelf extends InitDataBase {
 
     public static String getBookName(int bookId) {
         return dataBase.getBookName(bookId);
+    }
+
+    public static Detail[] getAllBooks() {
+        return dataBase.getAllBookDetail();
     }
 
 

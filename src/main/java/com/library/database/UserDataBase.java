@@ -1,6 +1,7 @@
 package com.library.database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,13 +28,15 @@ public class UserDataBase extends DataBaseLoad {
     public Map<Integer, String> getAllUsers() {
         try {
             PreparedStatement select_pstmt = conn.prepareStatement(get_all_pstmts);
-            rs = select_pstmt.executeQuery();
+            ResultSet rs = select_pstmt.executeQuery();
             Map<Integer, String> users = new HashMap<>();
             while (rs.next()) {
                 int iduser = rs.getInt(1);
                 String uname = rs.getString(2);
                 users.put(iduser, uname);
             }
+            System.out.println(users);
+            rs.close();
             return users;
         } catch (SQLException e) {
             return null;
@@ -67,8 +70,10 @@ public class UserDataBase extends DataBaseLoad {
             PreparedStatement check_pstmt = conn.prepareStatement(find_userid_stmts);
             check_pstmt.setString(1, username);
             if (check_pstmt.executeQuery().next()) {
-                rs = check_pstmt.getResultSet();
-                return rs.getInt("iduser");
+                ResultSet rs = check_pstmt.getResultSet();
+                int iduser = rs.getInt("iduser");
+                rs.close();
+                return iduser;
             }
         } catch (SQLException e) {
             return -1;
@@ -81,8 +86,10 @@ public class UserDataBase extends DataBaseLoad {
             PreparedStatement check_pstmt = conn.prepareStatement(find_username_stmts);
             check_pstmt.setInt(1, Integer.parseInt(userid));
             if (check_pstmt.executeQuery().next()) {
-                rs = check_pstmt.getResultSet();
-                return rs.getString("name");
+                ResultSet rs = check_pstmt.getResultSet();
+                String name = rs.getString("name");
+                rs.close();
+                return name;
             }
         } catch (SQLException e) {
             return null;
@@ -96,8 +103,10 @@ public class UserDataBase extends DataBaseLoad {
                 PreparedStatement check_pstmt = conn.prepareStatement(find_uniquecode_stmts);
                 check_pstmt.setString(1, username);
                 if (check_pstmt.executeQuery().next()) {
-                    rs = check_pstmt.getResultSet();
-                    return rs.getInt("uniquecode");
+                    ResultSet rs = check_pstmt.getResultSet();
+                    int uniquecode = rs.getInt("uniquecode");
+                    rs.close();
+                    return uniquecode;
                 }
             }
         } catch (SQLException e) {
